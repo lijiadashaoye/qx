@@ -50,6 +50,7 @@
       </el-form>
     </div>
 
+    <button @click="makePostData">makePostData</button>
     <!-- 预览显示 -->
     <makeCanvas :muban="muban" ref="can" />
 
@@ -256,7 +257,6 @@ import presetText from "./components/presetText";
 import presetImg from "./components/presetImg";
 import signature from "../../mixins/signatureMixin.js";
 import makeCanvas from "./makeCanvas.vue";
-import { image } from "html2canvas/dist/types/css/types/image";
 
 export default {
   mixins: [signature],
@@ -271,6 +271,8 @@ export default {
   },
   data() {
     return {
+      yyyy: "",
+      muban: {}, // 用来显示canvas
       qrcodeSign: "",
       preCert: {},
       showPreCert: false,
@@ -349,15 +351,14 @@ export default {
       loading: false,
       saveActive: null,
       parentH: 1800,
-      muban: {}, // 用来显示canvas
     };
   },
   created() {
+    let data = this.$store.state.dragLesize.muban;
     // 通过选择模板
-    if (this.$route.query.type == 1) {
+    if (data.type == 1) {
       // 获取路由传递的参数
-      let content = JSON.parse(this.$route.query.data[0]);
-
+      let content = JSON.parse(data.data[0]);
       if (!content.id || !content.name || !content.content) {
         this.$router.push({ path: "certificateManagement" });
       }
@@ -393,50 +394,93 @@ export default {
       });
     } else {
       // 通过选择图片
-      let content = this.$route.query.data[0];
-      console.log(content);
-      if (/image/.test(content.type)) {
-        // let img = new Image();
-        // img.src = new Blob(content.data);
-        // img.onload = (e) => {
-        //   console.log(e);
-        // };
+
+      if (/image/.test(data.data[0].type)) {
+        const reader = new FileReader();
+        reader.readAsDataURL(data.data[0]);
+        reader.onload = () => {
+          this.muban = {
+            width: this.templateForm.width,
+            height: this.templateForm.height,
+            backgroundImage: reader.result,
+            backgroundColor: "",
+            children: [
+              {
+                tagName: "qrcode", // 记录实际有内容的元素
+                left: this.templateForm.width - 81, // 坐标x，需要距边界10px
+                top: this.templateForm.height - 81, // 坐标y
+                width: 71,
+                height: 71,
+                content: "占位示例二维码",
+              },
+            ],
+          };
+        };
       }
 
       // 预览
-      if (/pdf/.test(content.type)) {
-        let pdfPath = URL.createObjectURL(content);
+      if (/pdf/.test(data.data[0].type)) {
+        let pdfPath = URL.createObjectURL(data.data[0]);
         let pdfjsLib = require("../../../static/js/pdf/pdf");
         pdfjsLib.PDFJS.workerSrc = "../../../static/js/pdf/pdf.worker.js";
         let loadingTask = pdfjsLib.getDocument(pdfPath);
-
-        loadingTask.promise.then(function (pdfDocument) {
-          let pageNume = pdfDocument.numPages,
-            promiseArr = []; // 记录pdf一共有几页
-          for (let i = 0; i < pageNume; i++) {
-            let pro = pdfDocument.getPage(i + 1);
-            promiseArr.push(pro);
-          }
-
-          Promise.all(promiseArr).then((cavs) => {
-            cavs.forEach((pdfPage) => {
-              // getViewport第一个参数scale，第二个是rotate
-              var viewport = pdfPage.getViewport(1, 360);
-              var canvas = document.createElement("canvas");
-              canvas.width = pdfPage.view[2];
-              canvas.height = pdfPage.view[3];
-              var ctx = canvas.getContext("2d");
-
-              var renderContext = {
-                canvasContext: ctx,
-                viewport: viewport,
+        loadingTask.promise.then((pdfDocument) => {
+          pdfDocument.getPage(1).then((pdfPage) => {
+            // getViewport第一个参数scale，第二个是rotate
+            var viewport = pdfPage.getViewport(1, 360);
+            var canvas = document.createElement("canvas");
+            canvas.width = pdfPage.view[2];
+            canvas.height = pdfPage.view[3];
+            var ctx = canvas.getContext("2d");
+            var renderContext = {
+              canvasContext: ctx,
+              viewport: viewport,
+            };
+            pdfPage.render(renderContext).then(() => {
+              this.muban = {
+                width: this.templateForm.width,
+                height: this.templateForm.height,
+                backgroundImage: canvas.toDataURL("image/png", 1), // 获取到pdf的第一页base64码
+                backgroundColor: "",
+                children: [
+                  {
+                    tagName: "qrcode", // 记录实际有内容的元素
+                    left: this.templateForm.width - 81, // 坐标x
+                    top: this.templateForm.height - 81, // 坐标y
+                    width: 71,
+                    height: 71,
+                    content: "占位示例二维码",
+                  },
+                ],
               };
-              pdfPage.render(renderContext).then(() => {
-                let kk = canvas.toDataURL("image/png", 1);
-                console.log(kk); // 获取到的每一张pdf的base64码
-              });
             });
           });
+
+          // 转换pdf每一
+          // let pageNume = pdfDocument.numPages, // 读取pdf一共有几页
+          //   promiseArr = []; // 记录pdf一共有几页
+          // for (let i = 0; i < pageNume; i++) {
+          //   let pro = pdfDocument.getPage(i + 1);
+          //   promiseArr.push(pro);
+          // }
+          // Promise.all(promiseArr).then((cavs) => {
+          //   cavs.forEach((pdfPage,ind) => {
+          //     // getViewport第一个参数scale，第二个是rotate
+          //     var viewport = pdfPage.getViewport(1, 360);
+          //     var canvas = document.createElement("canvas");
+          //     canvas.width = pdfPage.view[2];
+          //     canvas.height = pdfPage.view[3];
+          //     var ctx = canvas.getContext("2d");
+          //     var renderContext = {
+          //       canvasContext: ctx,
+          //       viewport: viewport,
+          //     };
+          //     pdfPage.render(renderContext).then(() => {
+          //       let kk = canvas.toDataURL("image/png", 1);
+          //       console.log(kk); // 获取到的每一张pdf的base64码
+          //     });
+          //   });
+          // });
         });
       }
     }
@@ -476,6 +520,8 @@ export default {
     makeInfo() {},
     // 生成最后要传到服务器的数据
     async makePostData() {
+      this.$set(this.muban.data, "data", [this.tempSelect]);
+
       let qrcodeData = this.muban.children.filter(
         (t) => t.tagName === "qrcode"
       );
@@ -1312,6 +1358,7 @@ export default {
   },
 };
 </script>
+
 <style lang="scss" scoped>
 @import "./issueCertificate";
 @import "~assets/css/mixin";

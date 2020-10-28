@@ -20,7 +20,7 @@ export default {
           this.fangdou = setTimeout(async () => {
             let kk = await this.makeCanvas(t);
             document.getElementById("inCanvas").appendChild(kk);
-          }, 1000);
+          }, 100);
         } else {
           clearTimeout(this.fangdou);
           this.fangdou = null;
@@ -30,7 +30,7 @@ export default {
     },
   },
   methods: {
-    // 生成最终使用的canva数据
+    // 生成最终使用的canvas数据
     async returnData(er) {
       let qrcodeData = this.muban.children.filter(
         (t) => t.tagName === "qrcode"
@@ -115,13 +115,11 @@ export default {
         if (t.tagName === "qrcode") {
           // 画二维码
           context.save();
-
           // 要生成二维码的数据
-
           var opts = {
             errorCorrectionLevel: "Q",
             quality: 1,
-            margin: 0.2,
+            margin: 0.1,
             maskPattern: 7, // 用于遮罩符号的遮罩图案  0--7
             width: 72,
             color: {
@@ -136,8 +134,8 @@ export default {
             let image = new Image();
             image.src = ma;
             image.onload = (e) => {
-              let erWeiMaX = forCanvas.width - opts.width;
-              let erWeiMaY = forCanvas.height - opts.width;
+              let erWeiMaX = forCanvas.width - opts.width-10;
+              let erWeiMaY = forCanvas.height - opts.width-10;
 
               context.drawImage(
                 e.path[0],

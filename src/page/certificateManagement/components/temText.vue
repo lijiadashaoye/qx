@@ -1,42 +1,44 @@
 <template>
   <div
-    @click="contenteditableParent"
+  @click="contenteditableParent"
     class="tmptext"
     @dblclick="editCentent_"
     :style="{
       backgroundColor: item_.backgroundColor,
     }"
   >
-    <!--  -->
-
-    <div
+  <!--  -->
+ 
+ <div
       class="editP"
       v-if="item_.type == 'textComponent'"
       @paste="onpaste"
       @keyup="keyup"
       @blur="textBlur"
       @focus="onFocus"
-      :class="{ fontWeight: item_.fontWeight }"
+       :class="{ fontWeight: item_.fontWeight }"
       :ref="item_.key + '_p'"
       :contenteditable="contenteditable"
       data-event-dbclick="dbclick_noCopy"
       @dblclick="editCentent_"
       :data_="item_.placeholder"
       :data__="item_.text"
-      :data_1="item_.placeholder && item_.placeholder.length > 0"
-      style="width: 100%; text-align: justify"
-      :style="{
+      :data_1=" item_.placeholder && item_.placeholder.length > 0"
+      style="width:100%;text-align:justify;"
+     :style="{
         color: item_.fontColor,
-        wordBreak: 'break-all',
+        wordBreak:'break-all',
         whiteSpace: 'pre-wrap',
         fontFamily: item_.fontFamily,
         textAlign: item_.textAlign,
         textAlignLast: item_.textAlign,
         fontSize: item_.fontSize + 'px',
-      }"
-    >
-      {{ placeholderData }}
-    </div>
+       
+      }" 
+     
+    >{{placeholderData}}</div>
+   
+   
   </div>
 </template>
 <script>
@@ -53,38 +55,36 @@ export default {
   },
   props: {
     item_: {
-      type: Object,
+      type: Object
     },
     value_: {
-      type: String,
-    },
+      type: String
+    }
   },
   // model: {
   //   prop: "value_",
   //   event: "keyup"
   // },
-  computed: {
+computed: {
+   
     placeholderData: {
-      get: function () {
-        let placeH =
-          this.item_.placeholder == "请输入提示语"
-            ? "请输入"
-            : this.item_.placeholder;
-        // console.log( this.eventValue1 || placeH);
+      get: function() {
+        
+        let placeH = this.item_.placeholder=='请输入提示语'?'请输入':this.item_.placeholder;
+console.log( this.eventValue1 || placeH);
 
         return this.eventValue1 || placeH;
       },
-      set: function () {
-        let placeH =
-          this.item_.placeholder == "请输入提示语"
-            ? "请输入"
-            : this.item_.placeholder;
+      set: function() {
 
+         let placeH = this.item_.placeholder=='请输入提示语'?'请输入':this.item_.placeholder;
+         
         return this.eventValue1 || placeH;
-      },
-    },
+        
+      }
+    }
   },
-
+ 
   mounted() {
     const style = `
         #${this.item_.key}'_p'::-webkit-input-placeholder {
@@ -95,30 +95,29 @@ export default {
     this.styleEl = document.createElement("style");
     this.styleEl.type = "text/css";
     this.styleEl.innerHTML = style;
-    document.getElementsByTagName("head").item(0).appendChild(this.styleEl);
+    document
+      .getElementsByTagName("head")
+      .item(0)
+      .appendChild(this.styleEl);
   },
 
   methods: {
-    textBlur(e) {
-      if (this.item_.text.length < 1) {
-        e.target.innerText =
-          this.item_.placeholder == "请输入提示语"
-            ? "请输入"
-            : this.item_.placeholder;
-      }
-      e.target.parentElement.style.border = "1px solid #dedede";
-      e.target.parentElement.style.padding = "0";
-      // this.contenteditable = false;
-      if (this.item_.text.length > 0) {
-        this.eventValue1 = this.item_.text;
-      } else {
-        this.eventValue1 = null;
-        e.target.innerHTML =
-          this.item_.placeholder == "请输入提示语"
-            ? "请输入"
-            : this.item_.placeholder;
-      }
-    },
+     textBlur(e) {
+       if(this.item_.text.length<1){
+          e.target.innerText=this.item_.placeholder=='请输入提示语'?'请输入':this.item_.placeholder;
+          
+        
+        }
+        e.target.parentElement.style.border='1px solid #dedede'
+         e.target.parentElement.style.padding='0'
+        // this.contenteditable = false;
+        if (this.item_.text.length>0) {
+            this.eventValue1 = this.item_.text;
+        }else{
+          this.eventValue1=null;
+          e.target.innerHTML=this.item_.placeholder=='请输入提示语'?'请输入':this.item_.placeholder;
+        }
+     },
     // change(e) {
     //   // if(e.target.value.length>28){
     //   //   e.target.value=e.target.value.substring(0,28);
@@ -126,8 +125,8 @@ export default {
     //   this.$emit("keyup", e.target.value);
     // },
     editCentent_(e) {
-      return;
-      console.log("getSelection");
+      return ;
+           console.log('getSelection');
       // this.contenteditable = true;
       // e.target.innerHTML+='1'
       this.$nextTick(() => {
@@ -140,56 +139,65 @@ export default {
           range.selectNodeContents(e.target);
           window.getSelection().removeAllRanges();
           window.getSelection().addRange(range);
+          
         }
+        
+        
+       
       });
 
       e.stopPropagation();
       e.preventDefault();
     },
-    onpaste(e) {
-      return;
-      let paste = (e.clipboardData || e.clipboardData).getData("text");
+    onpaste(e){ 
+      return ;
+      let paste = (e.clipboardData || e.clipboardData).getData('text');
       // (e.clipboardData || e.clipboardData).setData("text", '123132')
 
-      paste = paste.replace(/<.*?>/g, "");
-      if (paste.length < 1) return false;
-      console.log("paste", paste);
-      const selection = window.getSelection();
-      if (!selection.rangeCount) return false;
-      selection.deleteFromDocument();
-      selection.getRangeAt(0).insertNode(document.createTextNode(paste));
-      selection.collapseToEnd();
-      e.preventDefault();
+    paste = paste.replace(/<.*?>/g, "");
+    if(paste.length<1)return false;
+    console.log('paste',paste);
+    const selection = window.getSelection();
+    if (!selection.rangeCount) return false;
+    selection.deleteFromDocument();
+    selection.getRangeAt(0).insertNode(document.createTextNode(paste));
+    selection.collapseToEnd()
+    e.preventDefault();
     },
-    onFocus(e) {
-      e.target.parentElement.style.border = "1px solid #F76A0D";
-      e.target.parentElement.style.padding = "1px ";
-      if (this.item_.text.length < 1) {
-        e.target.innerText = "";
-      }
+    onFocus(e){
+     e.target.parentElement.style.border='1px solid #F76A0D'
+      e.target.parentElement.style.padding='1px '
+       if(this.item_.text.length<1){
+          e.target.innerText='';
+         
+        
+        }
     },
     // 该方法获取高度实时设置高度
     keyup(e) {
-      let value = e.target.innerText; //.replace(/<.*?>/g, "");
+    
+      let value = e.target.innerText//.replace(/<.*?>/g, "");
+     
 
-      this.$emit("keyup", value, this.item_);
+      
+       this.$emit("keyup", value,this.item_);
     },
     contenteditableParent(e) {
       // console.log(this.$refs[this.item_.key+'_p']);
-      this.$refs[this.item_.key + "_p"].focus();
+      this.$refs[this.item_.key+'_p'].focus()
       // if(e.target.classList.value!='editP'){
-
+      
       //   this.contenteditable = false;
       // }
     },
-  },
+  }
 };
 </script>
 <style >
-.editP {
+.editP{
   outline: none;
-  font-weight: 100;
-  /* border-color: #F76A0D; */
+  font-weight:100;
+    /* border-color: #F76A0D; */
 }
 .fontWeight {
   font-weight: bold;
@@ -212,7 +220,7 @@ textarea::-webkit-input-placeholder {
 }
 
 .tmptext {
-  cursor: pointer;
+  cursor:pointer;
   display: flex;
   width: 100%;
   height: 100%;

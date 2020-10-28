@@ -20,56 +20,56 @@ module.exports = {
   },
   dev: {
     env: require('./dev.env'),
-    host:'http://localhsot:9530',
+    host: 'http://localhsot:9530',
     port: 9530,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     // 地址映射表，可以通过设置将复杂的url简化，还可以解决跨域问题
     proxyTable: {
-      "/pdxfile":{
-        target:'http://local.trace.pdx.ltd',
+      "/pdxfile": {
+        target: 'http://local.trace.pdx.ltd',
         // changeOrigin: true,
         // pathRewrite: {
         // '/group*/': '/group*'
         // }
       },
-      '/certapp':{
-       // target:'http://local.trace.pdx.ltd',
-        target:'http://local.trace.pdx.ltd',
+      '/certapp': {
+        // target:'http://local.trace.pdx.ltd',
+        target: 'http://local.trace.pdx.ltd',
         changeOrigin: true
       },
-      "/certadmin":{
-       // target:'http://local.trace.pdx.ltd',
-       target:'http://local.trace.pdx.ltd',
+      "/certadmin": {
+        // target:'http://local.trace.pdx.ltd',
+        target: 'http://local.trace.pdx.ltd',
         changeOrigin: true
       },
-      '/certimg':{
-        target:'http://local.trace.pdx.ltd',
+      '/certimg': {
+        target: 'http://local.trace.pdx.ltd',
         changeOrigin: true,
         pathRewrite: {
           '^/certimg': '' //重写接口，去掉/api
-         }
+        }
       },
       "/admin": {
-      
+
         // target:"http://local.trace.pdx.ltd",
-        target:'http://local.trace.pdx.ltd',
+        target: 'http://local.trace.pdx.ltd',
         changeOrigin: true
       },
-      "/model":{
+      "/model": {
         // target:"http://local.trace.pdx.ltd",
-        target:'http://local.trace.pdx.ltd',
+        target: 'http://local.trace.pdx.ltd',
         changeOrigin: true
       },
-      "/user":{
+      "/user": {
         // target:"http://local.trace.pdx.ltd",
-        target:'http://local.trace.pdx.ltd',
+        target: 'http://local.trace.pdx.ltd',
         changeOrigin: true
       },
-      
-      "/product":{
+
+      "/product": {
         // target:"http://local.trace.pdx.ltd",
-        target:'http://local.trace.pdx.ltd',
+        target: 'http://local.trace.pdx.ltd',
         changeOrigin: true
       }
     },

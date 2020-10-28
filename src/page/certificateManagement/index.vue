@@ -254,6 +254,7 @@
         class="issueCertify"
         title="颁发证书"
         :visible.sync="issueCertify"
+        :close-on-click-modal="false"
         :before-close="resetData"
         width="30rem"
       >
@@ -321,6 +322,7 @@
         title="批量颁发证书"
         :visible.sync="issueCertifys"
         :before-close="resetData"
+        :close-on-click-modal="false"
         width="30rem"
       >
         <el-form>
@@ -644,17 +646,7 @@ export default {
         input.onchange = (e) => {
           let file = e.path[0].files[0];
           if (/image/.test(file.type) || /pdf/.test(file.type)) {
-            // const reader = new FileReader();
-            // reader.readAsArrayBuffer(file);
-            // reader.onload = () => {
-            //   this.$set(this.singleUp, "data", [
-            //     {
-            //       type: file.type, // 文件类型
-            //       name: file.name, // 文件名称
-            //       data: reader.result, // 文件的地址
-            //     },
-            //   ]);
-            // };
+            this.$set(this.singleUp, "data", [file]);
           } else {
             this.$message({
               message: "请选择正缺的文件（图片、PDF）！",
@@ -677,16 +669,18 @@ export default {
             badType: [],
             data: [],
           };
+          // 将全部上传过的文件整合
           let arr = []
             .concat(this.moreUp.data.data)
             .concat(this.moreUp.data.badType);
           // 首次上传
           if (!arr.length) {
             Array.from(e.path[0].files).forEach((tar, ind) => {
+              // 判断文件类型
               if (/image/.test(tar.type) || /pdf/.test(tar.type)) {
-                this.moreUp.data.data.push(tar);
+                this.moreUp.data.data.push(tar); // 正确格式的
               } else {
-                this.moreUp.data.badType.push(tar);
+                this.moreUp.data.badType.push(tar); // 错误格式的
               }
             });
 
@@ -698,11 +692,11 @@ export default {
             }
           } else {
             // 去重
-            let names = arr.map((t) => t.name),
-              num = 0;
-
+            let names = arr.map((t) => t.name), // 获取已经上传过的文件的名字
+              num = 0; // 记录出现重复的文件数量
             Array.from(e.path[0].files).forEach((tar) => {
               if (!names.includes(tar.name)) {
+                // 如果重新上传的文件名字没有出现过则为新文件
                 if (/image/.test(tar.type) || /pdf/.test(tar.type)) {
                   this.moreUp.data.data.push(tar);
                 } else {
@@ -741,11 +735,11 @@ export default {
     },
     // 重置选择
     resetData(num) {
+      // 关闭弹框、radio切换时都调用，当num=1时为radio切换
       if (num !== 1) {
         this.issueCertify = false;
         this.issueCertifys = false;
       }
-
       this.$set(this.singleUp, "data", []);
       this.$set(this.moreUp, "data", {
         badType: [],
@@ -758,10 +752,11 @@ export default {
       if (!this.singleUp.data.length) {
         this.$message({ message: "请选择好数据！", type: "warning" });
       } else {
+        // 使用vuex可以保存完整的数据格式类型
+        this.$store.state.dragLesize.muban = this.singleUp;
         //单独颁发跳转
         this.$router.push({
           path: "issueCertificate",
-          query: this.singleUp,
         });
       }
     },
@@ -770,10 +765,10 @@ export default {
       if (this.moreUp.data.badType.length) {
         this.$message({ message: "请正确选择好数据！", type: "warning" });
       } else {
+        this.$store.state.dragLesize.muban = this.moreUp;
         //批量颁发跳转
         this.$router.push({
           path: "batchIssue",
-          query: this.moreUp,
         });
       }
     },
@@ -802,7 +797,7 @@ export default {
           break;
       }
     },
-    // 点击取消，重置数据
+    // 点击取消，重置数据，关闭弹框
     singleOff() {
       this.issueCertify = false;
       this.issueCertifys = false;
@@ -1259,6 +1254,8 @@ export default {
     },
   },
   created() {
+    // 重置muban状态数据
+    this.$store.state.dragLesize.muban = {};
     this.$parent.getUserInfo_();
     this.getList();
     this.getTempList();

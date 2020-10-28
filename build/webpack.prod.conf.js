@@ -8,15 +8,23 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 var env = config.build.env
 // var webpackConfig = merge(baseWebpackConfig, {
-var { chunksWebpackConfig,htmlWebpackConfig,htmlWebpackConfigPage1,htmlWebpackConfigH5  } = require('./webpack.chunk.conf')
+var {
+  chunksWebpackConfig,
+  htmlWebpackConfig,
+  htmlWebpackConfigPage1,
+  htmlWebpackConfigH5
+} = require('./webpack.chunk.conf')
 console.log(
   '  Tip:\n' +
-  '  webpack.prod.config_.\n' 
-  
+  '  webpack.prod.config_.\n'
+
 )
-var webpackConfig = merge(baseWebpackConfig,chunksWebpackConfig, {
+var webpackConfig = merge(baseWebpackConfig, chunksWebpackConfig, {
   module: {
-    loaders: utils.styleLoaders({ sourceMap: config.build.productionSourceMap, extract: true })
+    loaders: utils.styleLoaders({
+      sourceMap: config.build.productionSourceMap,
+      extract: true
+    })
   },
   devtool: config.build.productionSourceMap ? '#source-map' : false,
   output: {
@@ -37,8 +45,8 @@ var webpackConfig = merge(baseWebpackConfig,chunksWebpackConfig, {
     }),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
-        drop_debugger:true,
-        drop_console:true,
+        drop_debugger: true,
+        drop_console: true,
         warnings: false
       }
     }),
@@ -59,12 +67,12 @@ var webpackConfig = merge(baseWebpackConfig,chunksWebpackConfig, {
         // more options:
         // https://github.com/kangax/html-minifier#options-quick-reference
       },
-      
+
       // necessary to consistently work with multiple chunks via CommonsChunkPlugin
       chunksSortMode: 'dependency',
       // chunks: ['manifest', 'vendor', 'app']
-    },htmlWebpackConfig)),  // shawnstart
-    
+    }, htmlWebpackConfig)), // shawnstart
+
   ]
 })
 

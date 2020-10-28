@@ -3,22 +3,31 @@
     <div>
       <el-row class="row">
         <el-col :span="3"
-          ><div class="grid-content bg-purple">模板名称</div></el-col
+          ><div class="grid-content bg-purple">图 片 名 称</div></el-col
         >
-        <el-col :span="21"
-          ><div class="grid-content bg-purple-light">
+        <el-col :span="21">
+          <ul class="nameList">
+            <li
+              v-for="(t, ind) in $store.state.dragLesize.muban.data.data"
+              :key="t.name"
+            >
+              {{ `${ind + 1}：` }}{{ t.name }}
+            </li>
+          </ul>
+
+          <!-- <div class="grid-content bg-purple-light">
             {{ dynamicValidateForm.tmpname }}
-          </div></el-col
-        >
+          </div> -->
+        </el-col>
       </el-row>
 
       <el-row class="row" :class="{ isRow: companyAuthIds.length > 0 }">
         <el-col :span="3"
-          ><div class="grid-content bg-purple">设置授权</div></el-col
+          ><div class="grid-content bg-purple">设 置 授 权</div></el-col
         >
         <el-col :span="21">
           <div class="grid-content bg-purple-light">
-            <div class="btn" @click="addOprate(1)">设置授权</div>
+            <div class="btn" @click="addOprate(1)">设 置 授 权</div>
           </div>
         </el-col>
       </el-row>
@@ -51,49 +60,99 @@
           </div>
         </el-col>
       </el-row>
-      <el-row class="row isRow">
+
+      <el-row>
         <el-col :span="3"
-          ><div class="grid-content bg-purple">证书内容</div></el-col
+          ><div class="grid-content bg-purple">证书信息</div></el-col
         >
-        <el-col :span="21">
-          <div class="grid-content bg-purple-light fileBtn">
-            <el-upload
-              class="upload-demo"
-              action="#"
-              :limit="2"
-              :auto-upload="false"
-              :on-change="getFile"
+        <el-col :span="21" style="margin-bottom: 30px">
+          <el-button size="small" plain @click="upLine = true"
+            >编辑上链信息</el-button
+          >
+        </el-col>
+
+        <el-dialog
+          :close-on-click-modal="false"
+          class="diloag diloagTwo"
+          title="选择上链信息名称"
+          :visible.sync="upLine"
+          :before-close="closeUpLine"
+          width="34rem"
+        >
+          <p>
+            已选择<span style="color: #f76a0d">{{
+              ` ${upLineData.length} `
+            }}</span
+            >个
+          </p>
+          <ul class="hasSelect">
+            <li v-for="t in upLineData" :key="t.id">{{ t.name }}</li>
+          </ul>
+          <p>请选择：</p>
+          <div></div>
+          <div></div>
+
+          <span slot="footer" class="dialog-footer">
+            <el-button size="small" @click="closeUpLine">取 消</el-button>
+            <el-button size="small" type="primary" @click="makeInfo"
+              >确 定</el-button
             >
-              <!-- :limit="1" -->
-              <!-- <el-button size="small" type="primary" v-if=" uploadStatus==2"
+          </span>
+        </el-dialog>
+      </el-row>
+
+      <el-row class="row isRow">
+        <el-col :span="21" :offset="3">
+          <el-row class="row isRow">
+            <el-col :span="2">上链信息名称</el-col>
+            <el-col :span="19"> dfasdfdsf</el-col>
+          </el-row>
+          <el-row class="row isRow">
+            <el-col :span="2">证书内容</el-col>
+            <el-col :span="19">
+              <div class="grid-content bg-purple-light fileBtn">
+                <el-upload
+                  class="upload-demo"
+                  action="#"
+                  :limit="2"
+                  :auto-upload="false"
+                  :on-change="getFile"
+                >
+                  <!-- :limit="1" -->
+                  <!-- <el-button size="small" type="primary" v-if=" uploadStatus==2"
                 >修改文件</el-button
               > -->
-              <el-button size="small" type="primary">{{ title }}</el-button>
-            </el-upload>
-            <div class="fileName" v-if="uploadStatus == 2">
-              已上传，{{ fileName }}
-            </div>
-            <div class="fileName" v-if="uploadStatus == 1">正在上传请稍等</div>
-          </div>
+                  <span style="color: #f76a0d; font-weight: bold">{{
+                    title
+                  }}</span>
+                </el-upload>
+                <div class="fileName" v-if="uploadStatus == 2">
+                  已上传，{{ fileName }}
+                </div>
+                <div class="fileName" v-if="uploadStatus == 1">
+                  正在上传请稍等
+                </div>
+              </div>
+            </el-col>
+          </el-row>
+          <el-row class="row isRow">
+            <el-col :span="19" :offset="2">
+              <div class="tip">
+                请上传.zip类型的压缩文件，<span
+                  class="tip2"
+                  @click="downloadZip"
+                  >点击下载</span
+                >证书内容文件格式及操作说明
+              </div></el-col
+            >
+          </el-row>
         </el-col>
       </el-row>
-      <el-row class="row">
-        <el-col :span="3"><div class="grid-content bg-purple"></div></el-col>
-        <el-col :span="21">
-          <div class="grid-content bg-purple-light">
-            <div class="tip">
-              请上传.zip类型的压缩文件，<span class="tip2" @click="downloadZip"
-                >点击下载</span
-              >证书内容文件格式及操作说明
-            </div>
-          </div>
-        </el-col>
-      </el-row>
-      <el-row class="row2">
+      <!-- <el-row class="row2">
         <el-col :span="3"
           ><div class="grid-content bg-purple">证书模板样式</div></el-col
         >
-        <el-col :span="21">
+       <el-col :span="21">
           <div class="grid-content bg-purple-light">
             <div class="templatebox">
               <div
@@ -104,9 +163,6 @@
                   overflow: 'auto',
                 }"
               >
-                <!-- 首页 
-                        width:Number(templateForm.width)+5+'px',
-                        -->
                 <div
                   class="phone-set-box"
                   :style="{
@@ -172,7 +228,14 @@
             </div>
           </div>
         </el-col>
+      </el-row> -->
+
+      <el-row>
+        <button @click="makePostData">makePostData</button>
+        <!-- 预览显示 -->
+        <makeCanvas v-for="(t, ind) in forYuLan" :key="ind" :muban="t" />
       </el-row>
+
       <el-row class="row">
         <el-col :span="3"><div class="grid-content bg-purple"></div></el-col>
         <el-col :span="21">
@@ -304,6 +367,7 @@
 
       <div class="marginHegiht"></div>
     </el-dialog>
+
     <div class="templatebox" style="position: fixed" v-show="isOK">
       <div
         v-for="(item, index) in cretList"
@@ -376,7 +440,6 @@
                     height: 100 + '%',
                   }"
                 >
-                  <!-- <div>{{rect.type}}</div> -->
                   <qrcode
                     v-show="rect.type == 'qrcode'"
                     :id="rect.type == 'qrcode' ? 'qrcode' + index : null"
@@ -436,6 +499,7 @@ import signature from "../../mixins/signatureMixin.js";
 import XLSX from "xlsx";
 import { getJSON } from "../../api/getjson";
 import sha256 from "sha256";
+import makeCanvas from "./makeCanvas.vue";
 
 //  二维码插件  https://www.npmjs.com/package/qrcode
 import QRCode from "qrcode";
@@ -449,9 +513,20 @@ export default {
     presetText,
     qrcode,
     VueDragResize,
+    makeCanvas,
   },
   data() {
     return {
+      yyyy: "",
+      forYuLan: [], // 用来预览
+      upLine: false, // 编辑上链信息弹框
+      upLineData: [
+        {
+          id: 4,
+          name: "asdfasdfasdf",
+        },
+      ], // 编辑上链信息的数据
+      ///////////////////////////////////////////////////////////////////
       isOK: false,
       title: "上传文件",
       // 通过上传读取到的zip文件的内容
@@ -557,43 +632,144 @@ export default {
     };
   },
   created() {
-    //       certNum	int	已用证书数量
+    // certNum	int	已用证书数量
     // certLimit
 
-    let content = JSON.parse(this.$route.query.content);
-    if (!content.id || !content.name || !content.content) {
-      this.$router.push({ path: "certificateManagement" });
-    }
-    this.dynamicValidateForm = {
-      tmpname: content.name,
-      id: content.id,
-      certName: "",
-    };
-    this.$store
-      .dispatch("dragLesize/get_rects", { url: content.content })
-      .then((result) => {
-        this.certificateImage = result.backgroundImg;
-        if (result.backgroundImg.length > 0) {
-          this.bgImg[0] = result.backgroundImg;
-        }
+    // 拿到选择的文件
+    let data = this.$store.state.dragLesize.muban;
+    // 通过选择模板
+    if (data.type == 1) {
+      let content = JSON.parse(data.data.data[0]);
 
-        let temArea = {
-          width: result.templateWidth,
-          height: result.templateHeight,
-          bgColor: result.backgroundColor,
-        };
-        if (result.templateWidth > 595) {
-          this.domwidth = 595; //755
-        } else {
-          this.domwidth = 595;
-        }
-        this.templateForm = temArea;
+      if (!content.id || !content.name || !content.content) {
+        this.$router.push({ path: "certificateManagement" });
+      }
+      this.dynamicValidateForm = {
+        tmpname: content.name,
+        id: content.id,
+        certName: "",
+      };
+      this.$store
+        .dispatch("dragLesize/get_rects", { url: content.content })
+        .then((result) => {
+          this.makeMunban(result);
+          this.certificateImage = result.backgroundImg;
+          if (result.backgroundImg.length > 0) {
+            this.bgImg[0] = result.backgroundImg;
+          }
+
+          let temArea = {
+            width: result.templateWidth,
+            height: result.templateHeight,
+            bgColor: result.backgroundColor,
+          };
+          if (result.templateWidth > 595) {
+            this.domwidth = 595; //755
+          } else {
+            this.domwidth = 595;
+          }
+          this.templateForm = temArea;
+        });
+      this.$nextTick(() => {
+        this.resetParentHeight();
+
+        // this.setActiveModuleStatus()
       });
-    this.$nextTick(() => {
-      this.resetParentHeight();
+    } else {
+      // 通过选择文件
+      let datas = data.data.data;
+      datas.forEach((tar) => {
+        if (/image/.test(tar.type)) {
+          const reader = new FileReader();
+          reader.readAsDataURL(tar);
+          reader.onload = () => {
+            console.log(this.forYuLan);
+            this.forYuLan.push({
+              width: this.templateForm.width,
+              height: this.templateForm.height,
+              backgroundImage: reader.result,
+              backgroundColor: "",
+              children: [
+                {
+                  tagName: "qrcode", // 记录实际有内容的元素
+                  left: this.templateForm.width - 81, // 坐标x，需要距边界10px
+                  top: this.templateForm.height - 81, // 坐标y
+                  width: 71,
+                  height: 71,
+                  content: "占位示例二维码",
+                },
+              ],
+            });
+          };
+        }
 
-      // this.setActiveModuleStatus()
-    });
+        // 预览
+        if (/pdf/.test(tar.type)) {
+          let pdfPath = URL.createObjectURL(tar);
+          let pdfjsLib = require("../../../static/js/pdf/pdf");
+          pdfjsLib.PDFJS.workerSrc = "../../../static/js/pdf/pdf.worker.js";
+          let loadingTask = pdfjsLib.getDocument(pdfPath);
+          loadingTask.promise.then((pdfDocument) => {
+            pdfDocument.getPage(1).then((pdfPage) => {
+              // getViewport第一个参数scale，第二个是rotate
+              var viewport = pdfPage.getViewport(1, 360);
+              var canvas = document.createElement("canvas");
+              canvas.width = pdfPage.view[2];
+              canvas.height = pdfPage.view[3];
+              var ctx = canvas.getContext("2d");
+              var renderContext = {
+                canvasContext: ctx,
+                viewport: viewport,
+              };
+              pdfPage.render(renderContext).then(() => {
+                this.forYuLan.push({
+                  width: this.templateForm.width,
+                  height: this.templateForm.height,
+                  backgroundImage: canvas.toDataURL("image/png", 1), // 获取到pdf的第一页base64码
+                  backgroundColor: "",
+                  children: [
+                    {
+                      tagName: "qrcode", // 记录实际有内容的元素
+                      left: this.templateForm.width - 81, // 坐标x
+                      top: this.templateForm.height - 81, // 坐标y
+                      width: 71,
+                      height: 71,
+                      content: "占位示例二维码",
+                    },
+                  ],
+                });
+              });
+            });
+
+            // 转换pdf每一
+            // let pageNume = pdfDocument.numPages, // 读取pdf一共有几页
+            //   promiseArr = []; // 记录pdf一共有几页
+            // for (let i = 0; i < pageNume; i++) {
+            //   let pro = pdfDocument.getPage(i + 1);
+            //   promiseArr.push(pro);
+            // }
+            // Promise.all(promiseArr).then((cavs) => {
+            //   cavs.forEach((pdfPage,ind) => {
+            //     // getViewport第一个参数scale，第二个是rotate
+            //     var viewport = pdfPage.getViewport(1, 360);
+            //     var canvas = document.createElement("canvas");
+            //     canvas.width = pdfPage.view[2];
+            //     canvas.height = pdfPage.view[3];
+            //     var ctx = canvas.getContext("2d");
+            //     var renderContext = {
+            //       canvasContext: ctx,
+            //       viewport: viewport,
+            //     };
+            //     pdfPage.render(renderContext).then(() => {
+            //       let kk = canvas.toDataURL("image/png", 1);
+            //       console.log(kk); // 获取到的每一张pdf的base64码
+            //     });
+            //   });
+            // });
+          });
+        }
+      });
+    }
   },
 
   computed: {
@@ -635,6 +811,69 @@ export default {
     },
   },
   methods: {
+    // 编辑上链信息
+    makeInfo() {
+      console.log(this.upLineData);
+    },
+    // 编辑上链信息弹框的关闭
+    closeUpLine() {
+      this.upLine = false;
+      this.makeInfo = [];
+    },
+    // 生成最后要传到服务器的数据
+    async makePostData() {
+      this.$set(this.muban.data, "data", [this.tempSelect]);
+
+      let qrcodeData = this.muban.children.filter(
+        (t) => t.tagName === "qrcode"
+      );
+      let end = await this.$refs.can.returnData("99999999999999999999");
+      // end 为最后的base64码
+      console.log(end);
+    },
+    // 为画图组件进行数据的整理
+    makeMunban(data) {
+      let muban = {
+        width: data.templateWidth,
+        height: data.templateHeight,
+        backgroundImage: data.backgroundImg,
+        backgroundColor: data.backgroundColor,
+        children: [],
+      };
+      data.content.forEach((tar) => {
+        let obj = {
+          tagName: tar.type, // 记录实际有内容的元素
+          left: tar.left, // 坐标x
+          top: tar.top + Math.trunc(tar.height / 2), // 坐标y
+          width: tar.width, // 内容的宽
+          height: tar.height, // 内容的高
+        };
+        // 文字
+        if (obj.tagName === "presetText") {
+          obj.content = {
+            text: tar.text,
+            css: {
+              font: `${tar.fontSize ? tar.fontSize + "px " : ""}${
+                tar.fontFamily
+              } ${tar.fontWeight ? "bold" : ""}`,
+              fillStyle: tar.fontColor,
+            },
+          };
+        }
+        // 组织二维码数据
+        if (obj.tagName === "qrcode") {
+          obj.content = "占位示例二维码";
+        }
+        // 组织图片数据
+        if (obj.tagName === "presetImg") {
+          obj.content = tar.text;
+        }
+        muban.children.push(obj);
+      });
+      this.forYuLan.push(muban);
+    },
+
+    //////////////////////////////////////////////////////////////
     backList() {
       this.$router.push({ path: "/manage/certificateManagement" });
     },
@@ -856,7 +1095,7 @@ export default {
         }
 
         // 动态获取域名
-        let kk = self.location.origin + "/a/?c="
+        let kk = self.location.origin + "/a/?c=";
         console.log(kk);
 
         this.cretList[i]["corde"] =
@@ -1193,6 +1432,9 @@ export default {
       // });
     },
     getFile(file, fileList) {
+      console.log(file);
+      console.log(fileList);
+
       this.cretList = [];
       fileList = fileList.splice(0, 1);
       this.count = 0;

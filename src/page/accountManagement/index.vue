@@ -15,165 +15,73 @@
       <div class="adduserClass" @click="adduser">添加成员</div>
     </div> -->
     <div class="serchCondition">
-      <div class="left">
-        <div class="out">
-          <el-input
-            placeholder="请输入姓名、账号或手机号进行搜索"
-            prefix-icon="el-icon-search"
-            v-model="accountParams.keyword"
-            v-on:keyup.native.13="toPage('serch')"
-          >
-          </el-input>
-        </div>
-        <div class="servhBtn" @click="toPage('serch')">搜索</div>
-      </div>
-      <div class="right" v-if="!this.$parent.userinfo.isPlatformAdmin">
-        <span class="titleWorld"
-          >当前已添加成员数量<span class="fontColor">{{
-            this.$parent.userinfo.memberNum | num
-          }}</span
-          >，剩余可添加成员数量<span class="fontColor">{{
-            (this.$parent.userinfo.memberLimit -
-              this.$parent.userinfo.memberNum)
-              | num
-          }}</span></span
-        >
-        <div
-          class="btnInvite"
-          @click="adduser"
-          v-if="
-            $parent.permissionArr.indexOf(100501) >= 0 &&
-            this.$parent.userinfo.memberLimit -
-              this.$parent.userinfo.memberNum >
-              0
-          "
-        >
-          添加成员
-        </div>
-        <div
-          class="btnInvite btnInvite3"
-          v-if="
-            $parent.permissionArr.indexOf(100501) >= 0 &&
-            this.$parent.userinfo.memberLimit -
-              this.$parent.userinfo.memberNum <=
-              0
-          "
-        >
-          添加成员
-        </div>
-        <div class="btnInvite" @click="toPage('invite')">
-          我添加的成员
-          <!-- <span class="badge" v-if="inviteNum > 0">{{inviteNum}}</span> -->
-        </div>
-      </div>
-      <div class="right" v-if="this.$parent.userinfo.isPlatformAdmin">
-        <span class="titleWorld"
-          >当前已添加成员数量<span class="fontColor">{{
-            this.$parent.userinfo.memberNum | num
-          }}</span
-          >，剩余可添加成员数量<span class="fontColor">--</span></span
-        >
-        <div class="btnInvite" @click="adduser">添加成员</div>
-        <div class="btnInvite" @click="toPage('invite')">
-          我添加的成员
-          <!-- <span class="badge" v-if="inviteNum > 0">{{inviteNum}}</span> -->
-        </div>
-        <div
-          class="btnInvite"
-          v-if="$parent.permissionArr.indexOf(100550) >= 0"
-          @click="topage1"
-        >
-          角色管理
-        </div>
-      </div>
-    </div>
-    <div class="tip">
-      当前{{ totalInfo.name }}组织架构下 组织总数：<span class="fontColor">{{
-        totalInfo.allDepTotal
-      }}</span>
-      &nbsp;&nbsp; 账户总数：<span class="fontColor">{{
-        totalInfo.allUserTotal
-      }}</span>
-    </div>
-    <div class="order"></div>
-    <div class="levelOut">
-      组织：
-      <span
-        class="level"
-        v-for="(item, index) in departmentScortList"
-        :key="index"
-        :class="{ isColor: index == departmentScortList.length - 1 }"
-      >
-        {{ item.name }}
-        <i
-          v-if="index + 1 < departmentScortList.length"
-          class="el-icon-arrow-right"
-        ></i>
-      </span>
-    </div>
-    <div class="main">
-      <div class="list" v-for="(item, index) in listArr" :key="index">
-        <div class="topInfo">
-          <div class="number number1">
-            组织数量：<span class="fontColor">{{
-              item.departments.length
-            }}</span>
-          </div>
-          <div class="number">
-            账户数量：<span class="fontColor">{{
-              item.pageCommon.length
-            }}</span>
-          </div>
-        </div>
-        <el-scrollbar class="inMessage" ref="myScrollbar" style="height: 88%">
-          <div class="organizationTit" v-if="item.departments.length > 0">
-            组织
-          </div>
-          <div
-            v-for="(organizationInfo, index1) in item.departments"
-            :key="index1"
-            class="organizationName organizationName1"
-            @click="addList(item, index, organizationInfo, index1)"
-            :class="{ isorganizationName: organizationInfo.show == true }"
-          >
-            <div class="organizationNick">
-              <span>{{ organizationInfo.name }}</span>
-              <i class="el-icon-arrow-right"></i>
+            <div class="left">
+                <div class="out">
+                    <el-input
+                        placeholder="请输入姓名、账号或手机号进行搜索"
+                        prefix-icon="el-icon-search"
+                        v-model="accountParams.keyword">
+                    </el-input>
+                </div>
+                <div class="servhBtn" @click="toPage('serch')">
+                    搜索
+                </div>
             </div>
-            <div class="organizationInfo">
-              <span class="departName"
-                >组织：{{ organizationInfo.currentDepTotal | num }}</span
-              >
-              <span
-                >账户：{{ organizationInfo.currentSysUserTotal | num }}</span
-              >
+            <div class="right" v-if="!this.$parent.userinfo.isPlatformAdmin">
+                <span class="titleWorld">当前已添加成员数量<span class="fontColor">{{this.$parent.userinfo.memberNum | num}}</span>，剩余可添加成员数量<span class="fontColor">{{(this.$parent.userinfo.memberLimit - this.$parent.userinfo.memberNum) | num}}</span></span>
+                <div class="btnInvite " @click="adduser" v-if="$parent.permissionArr.indexOf(100501)>=0 && this.$parent.userinfo.memberLimit - this.$parent.userinfo.memberNum > 0">添加成员</div>
+                <div class="btnInvite btnInvite3 " v-if="$parent.permissionArr.indexOf(100501)>=0 && this.$parent.userinfo.memberLimit - this.$parent.userinfo.memberNum <= 0">添加成员</div>
+                <div class="btnInvite " @click="toPage('invite')">我添加的成员
+                  <!-- <span class="badge" v-if="inviteNum > 0">{{inviteNum}}</span> -->
+                </div>
             </div>
-          </div>
-          <div
-            class="accountTit"
-            v-if="item.pageCommon && item.pageCommon.length > 0"
-            @click="toPage('account', index)"
-          >
-            账户
-          </div>
-          <div
-            class="accountName"
-            v-for="(accountInfo, index2) in item.pageCommon"
-            :key="'nofo' + index2"
-            @click="toPage('accountInfo', index, item.id)"
-          >
-            <span>{{ accountInfo.username }}</span>
-          </div>
-          <div
-            class="click"
-            v-if="item.pageCommon && item.pageCommon.length < item.userTotal"
-          >
-            <i v-if="loadIcon" class="el-icon-loading"></i>
-            <span v-if="isLook" @click="lookMore(index)">查看更多</span>
-          </div>
-        </el-scrollbar>
-      </div>
-    </div>
+            <div class="right" v-if="this.$parent.userinfo.isPlatformAdmin">
+                <span class="titleWorld">当前已添加成员数量<span class="fontColor">{{this.$parent.userinfo.memberNum | num}}</span>，剩余可添加成员数量<span class="fontColor">--</span></span>
+                <div class="btnInvite" @click="adduser" >添加成员</div>
+                <div class="btnInvite " @click="toPage('invite')">我添加的成员
+                    <!-- <span class="badge" v-if="inviteNum > 0">{{inviteNum}}</span> -->
+                </div>
+                <div class="btnInvite" v-if="$parent.permissionArr.indexOf(100550)>=0" @click="topage1">角色管理</div>
+            </div>
+        </div>
+        <div class="tip">当前{{totalInfo.name}}组织架构下 组织总数：<span class="fontColor">{{totalInfo.allDepTotal}}</span> &nbsp;&nbsp; 账户总数：<span class="fontColor">{{totalInfo.allUserTotal}}</span></div>
+        <div class="order"></div>
+        <div class="levelOut">组织：
+          <span class="level" v-for="(item,index) in departmentScortList" :key="index" v-if="departmentScortList.length >0" :class="{isColor:index == departmentScortList.length - 1}">
+            {{item.name}}
+                <i v-if="(index+1) < departmentScortList.length" class="el-icon-arrow-right"></i>
+            </span>
+        </div>
+        <div class="main">
+            <div class="list" v-for="(item,index) in listArr" :key="index">
+                <div class="topInfo">
+                    <div class="number number1">组织数量：<span class="fontColor">{{item.departments.length}}</span></div>
+                    <div class="number">账户数量：<span class="fontColor">{{item.pageCommon.length}}</span></div>
+                </div>
+                <el-scrollbar class="inMessage"  ref="myScrollbar" style="height:88%">
+                <div class="organizationTit" v-if="item.departments.length > 0">组织</div>
+                <div v-for="(organizationInfo,index1) in item.departments" :key="index1" class="organizationName organizationName1" @click="addList(item,index,organizationInfo,index1)" :class="{isorganizationName:organizationInfo.show == true}"> 
+                    <div class="organizationNick">
+                        <span>{{organizationInfo.name}}</span>
+                        <i class="el-icon-arrow-right"></i>
+                    </div>
+                    <div class="organizationInfo">
+                        <span class="departName">组织：{{organizationInfo.currentDepTotal | num}}</span>
+                        <span>账户：{{organizationInfo.currentSysUserTotal | num}}</span>
+                    </div>
+                    
+                </div>
+                <div class="accountTit" v-if="item.pageCommon && item.pageCommon.length > 0" @click="toPage('account',index)">账户</div>
+                <div class="accountName" v-for="(accountInfo,index2) in item.pageCommon" :key="'nofo'+index2" @click="toPage('accountInfo',index,item.id)">
+                    <span>{{accountInfo.username}}</span>
+                </div>
+                <div class="click" v-if="item.pageCommon && item.pageCommon.length < item.userTotal">
+                    <i v-if="loadIcon" class="el-icon-loading"></i>
+                    <span v-if="isLook" @click="lookMore(index)">查看更多</span>
+                </div>
+                </el-scrollbar>
+            </div>
+        </div>
     <!-- 添加账户 -->
     <el-dialog
       class="dloag"
@@ -196,10 +104,10 @@
         <div class="demo-ruleForm">
           <div class="bttitle"></div>
           <el-form-item label="账号" prop="username">
-            <el-input v-model="addParams.username" maxlength="16"></el-input>
+            <el-input v-model="addParams.username"  maxlength="16"></el-input>
           </el-form-item>
           <el-form-item label="姓名" prop="realName">
-            <el-input v-model="addParams.realName" maxlength="16"></el-input>
+            <el-input v-model="addParams.realName"  maxlength="16"></el-input>
           </el-form-item>
 
           <el-form-item label="手机" prop="phone">
@@ -210,17 +118,8 @@
             ></el-input>
           </el-form-item>
           <el-form-item label="权限" prop="phone">
-            <el-select
-              v-model="addParams.roleIds"
-              placeholder="请选择"
-              style="width: 100%"
-            >
-              <el-option
-                v-for="item in options"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              ></el-option>
+            <el-select v-model="addParams.roleIds" placeholder="请选择" style="width:100%">
+              <el-option v-for="item in options" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
         </div>
@@ -241,30 +140,22 @@ import {
   apiEditOrAddUser,
   apiResetPaws,
   sysrolelist,
-  getBlockInfo,
+  getBlockInfo
 } from "api/account.js";
 import { apiUserLogout } from "api/login.js";
 import nodata from "../../components/nodeData/noData";
-import {
-  inviteAccountNum,
-  getDepartTreeListHAuth,
-  userAddPermissions,
-  getSysUserDepartmentList,
-  organizationList,
-  departmentScort,
-  totalNum,
-} from "api/account.js";
-import sha256 from "sha256";
-import signature from "../../mixins/signatureMixin.js";
+import { inviteAccountNum,getDepartTreeListHAuth, userAddPermissions,getSysUserDepartmentList, organizationList,departmentScort,totalNum} from "api/account.js";
+import sha256 from 'sha256';
+import signature from '../../mixins/signatureMixin.js';
 export default {
-  mixins: [signature],
+  mixins:[signature],
   components: { nodata },
   data() {
     return {
       props: {
         value: "id",
         label: "name",
-        children: "child",
+        children: "child"
       },
       departmentList: [],
       isSetting: false,
@@ -275,23 +166,23 @@ export default {
       dialogFormUserinfo: false,
       rules: {
         phone: [
-          { required: true, message: "电话必须填" },
+          { required: true, message: "电话必须填" }
           // { type: 'number', required: true, message: '电话格式不对' }
         ],
         username: [{ required: true, message: "姓名必须填" }],
-        realName: [{ required: true, message: "账号必须填" }],
+        realName: [{ required: true, message: "账号必须填" }]
       },
       ruleForm: {
         phone: "",
         username: "",
         realName: "",
         // roleIds: [],
-        id: "",
+        id: ""
       },
       tempObj: {
         phone: "",
         username: "",
-        realName: "",
+        realName: ""
         //  roleIds: ""
       },
       userinfo: { role: {}, user: {} },
@@ -301,7 +192,7 @@ export default {
       accountParams: {
         pageNum: 1,
         keyword: "",
-        pageSize: 10,
+        pageSize: 10
       },
       accountList: [],
       total: 0,
@@ -309,245 +200,237 @@ export default {
         phone: "",
         username: "",
         realName: "",
-        roleIds: [],
+        roleIds: []
       },
-      blockDetail: {},
-      isBlock: false,
-      listArr: [],
-      organizationParasms: {
-        parentId: "",
-        pageNum: 1,
-        pageSize: 20,
+        blockDetail:{},
+      isBlock:false,
+      listArr:[],
+      organizationParasms:{
+          parentId:'',
+          pageNum:1,
+          pageSize:20
       },
-      loadIcon: false,
-      isLook: true,
-      idArr: [],
-      departmentScortList: [],
-      totalInfo: {},
-      inviteNum: "",
+      loadIcon:false,
+      isLook:true,
+      idArr:[],
+      departmentScortList:[],
+      totalInfo:{},
+      inviteNum:''
     };
   },
   methods: {
     //角色管理
-    topage1() {
-      this.$router.push({ path: "permission" });
-    },
-    async getInviteNum() {
-      let result = await inviteAccountNum();
-      this.inviteNum = result;
-      // console.log(result);
-    },
-    getTotal(id) {
-      let params = {
-        type: 2,
-        id: id,
-      };
-      totalNum(params)
-        .then((result) => {
-          console.log(result);
-          if (result) {
-            this.totalInfo = {
-              name: this.departmentScortList[0].name,
-              allDepTotal: result.allDepTotal,
-              allUserTotal: result.allUserTotal,
-            };
-          }
-        })
-        .catch((error) => {});
-    },
-    toPage(type, index, userId) {
-      let params = {
-        id: "",
-        name: "",
-        type: "",
-      };
-      if (type == "serch") {
-        let idArr = [];
-        if (this.listArr.length > 0) {
-          for (let i = 0; i < this.listArr[0].departments.length; i++) {
-            idArr.push(this.listArr[0].departments[i].id);
-          }
-          params.id = idArr;
-          params.name = this.accountParams.keyword;
-          params.type = 1;
-          sessionStorage.setItem("listParams", JSON.stringify(params));
-        } else {
-          return;
-        }
-      } else if (type == "invite") {
-        params.id = "";
-        params.name = "";
-        params.type = 3;
-        sessionStorage.setItem("listParams", JSON.stringify(params));
-      } else if (type == "account") {
-        let arrId = [];
-        for (let i = 0; i < this.listArr[index - 1].departments.length; i++) {
-          if (this.listArr[index - 1].departments[i].show == true) {
-            arrId.push(this.listArr[index - 1].departments[i].id);
-          }
-        }
-        params.id = arrId;
-        params.name = "";
-        params.type = 2;
-        sessionStorage.setItem("listParams", JSON.stringify(params));
-      } else {
-        let arrId = [];
-        for (let i = 0; i < this.listArr[index - 1].departments.length; i++) {
-          if (this.listArr[index - 1].departments[i].show == true) {
-            arrId.push(this.listArr[index - 1].departments[i].id);
-          }
-        }
-        params.id = arrId;
-        params.userId = userId;
-        params.name = "";
-        params.type = 2;
-        sessionStorage.setItem("listParams", JSON.stringify(params));
-      }
-      this.$router.push({ path: "/manage/accountList" });
-    },
-    //获取架构表
-    getDepartmentScort(id, init) {
-      let params = {
-        id: id,
-      };
-      departmentScort(params)
-        .then((result) => {
-          console.log(result);
-          if (result && result.length > 0) {
-            this.departmentScortList = result;
-            this.getTotal(this.departmentScortList[0].id);
-          }
-        })
-        .catch((error) => {});
-    },
-    lookMore(index) {
-      this.loadIcon = true;
-      this.isLook = false;
-      this.organizationParasms.pageNum = this.organizationParasms.pageNum + 1;
-      organizationList(this.organizationParasms)
-        .then((result) => {
-          if (result) {
-            this.listArr[index].userTotal = result.pageCommon.total;
-            let pageCommon =
-              result.pageCommon.rows.length > 0 ? result.pageCommon.rows : [];
-            console.log(this.listArr[index].pageCommon, pageCommon);
-            this.listArr[index].pageCommon = this.listArr[
-              index
-            ].pageCommon.concat(pageCommon);
-            this.loadIcon = false;
-            this.isLook = true;
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    //获取架构列表
-    getOrganizationList(num, id, init) {
-      this.organizationParasms.parentId = id ? id : "";
-      organizationList(this.organizationParasms)
-        .then((result) => {
-          if (result) {
-            let obj = {
-              listNum: num,
-              departments:
-                result.departments.length > 0 ? result.departments : [],
-              pageCommon:
-                result.pageCommon.rows.length > 0 ? result.pageCommon.rows : [],
-              userTotal: result.pageCommon.total,
-              // show : null
-            };
-            if (obj.departments.length != 0 || obj.pageCommon.length != 0) {
-              this.listArr.push(obj);
+        topage1() {
+            this.$router.push({ path: "permission" });
+        },
+    async getInviteNum(){
+            let result = await inviteAccountNum();
+            this.inviteNum = result;
+            // console.log(result);
+      },
+     getTotal(id){
+            let params = {
+                type:2,
+                id:id
             }
-            if (obj.departments.length != 0 && init && num == 1) {
-              for (let i = 0; i < obj.departments.length; i++) {
-                if (i === 0) {
-                  this.$set(obj.departments[i], "show", true);
-                } else {
-                  this.$set(obj.departments[i], "show", false);
+            totalNum(params).then(result=>{
+                console.log(result);
+                if(result){
+                    
+                    this.totalInfo = {
+                        name : this.departmentScortList[0].name,
+                        allDepTotal : result.allDepTotal,
+                        allUserTotal : result.allUserTotal
+                    };
                 }
-              }
+            }).catch(error=>{
+
+            })
+        },
+        toPage(type,index,userId){
+            let params = {
+                id : '',
+                name:'',
+                type:''
             }
-            if (num == 1 && init) {
-              this.curId = obj.departments[0].id;
-              this.getOrganizationList(2, obj.departments[0].id);
-              this.getInviteNum();
+            if(type == 'serch'){
+                let idArr = [];
+                if(this.listArr.length > 0){
+                    for(let i = 0 ;i<this.listArr[0].departments.length;i++){
+                        idArr.push(this.listArr[0].departments[i].id);
+                    }
+                    params.id = idArr;
+                    params.name = this.accountParams.keyword;
+                    params.type = 1;
+                    sessionStorage.setItem('listParams',JSON.stringify(params));
+                }else{
+                    return;
+                }
+            }else if(type == 'invite'){
+                params.id = '';
+                params.name = '';
+                params.type = 3;
+                sessionStorage.setItem('listParams',JSON.stringify(params));
+            }else if(type == 'account'){
+                let arrId = [];
+                for(let i = 0 ;i<this.listArr[index -1].departments.length;i++){
+                    if(this.listArr[index -1].departments[i].show == true){
+                        arrId.push(this.listArr[index -1].departments[i].id);
+                    }
+                }
+                params.id = arrId;
+                params.name = '';
+                params.type = 2;
+                sessionStorage.setItem('listParams',JSON.stringify(params));
             }
-            if (init) {
-              this.getDepartmentScort(obj.departments[0].id, init);
-            } else {
-              this.getDepartmentScort(id);
+            else{
+                let arrId = [];
+                for(let i = 0 ;i<this.listArr[index -1].departments.length;i++){
+                    if(this.listArr[index -1].departments[i].show == true){
+                        arrId.push(this.listArr[index -1].departments[i].id);
+                    }
+                }
+                params.id = arrId;
+                params.userId = userId;
+                params.name = '';
+                params.type = 2;
+                sessionStorage.setItem('listParams',JSON.stringify(params));
             }
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    //添加一个列表
-    addList(item, index, organizationInfo, index1) {
-      this.organizationParasms.parentId = organizationInfo.id;
-      let tempNum = item.listNum + 1;
-      if (organizationInfo.show == true) {
-        organizationInfo.show = !organizationInfo.show;
-        this.listArr.splice(index + 1, this.listArr.length - (index + 1));
-        if (this.departmentScortList[index + 1]) {
-          for (let i = 0; i < this.departmentScortList.length; i++) {
-            if (this.departmentScortList[i].name == organizationInfo.name) {
-              console.log(
-                this.departmentScortList[i].name,
-                i,
-                this.departmentScortList
-              );
-              this.departmentScortList.splice(
-                i,
-                this.departmentScortList.length - i
-              );
+            this.$router.push({path:'/manage/accountList'});
+        },
+        //获取架构表
+        getDepartmentScort(id,init){
+            let params = {
+                id : id
             }
-          }
-        } else {
-          this.departmentScortList.splice(index, 1);
-        }
-      } else {
-        for (let i = 0; i < this.listArr[index].departments.length; i++) {
-          if (i == index1) {
-            this.listArr[index].departments[i].show = true;
-          } else {
-            this.listArr[index].departments[i].show = false;
-          }
-        }
-        if (this.listArr[index + 1]) {
-          this.listArr.splice(index + 1, this.listArr.length - (index + 1));
-          this.departmentScortList.splice(
-            index,
-            this.departmentScortList.length - (index + 1)
-          );
-          this.getOrganizationList(tempNum, this.organizationParasms.parentId);
-        } else {
-          this.getOrganizationList(tempNum, this.organizationParasms.parentId);
-        }
-      }
-    },
-    async getTxDetail(item) {
-      if (item.txStatus == 2 || item.txStatus == 1 || !item.txStatus) {
-        this.blockDetail = {
-          blockNumber: "--",
-          blockHash: "--",
-          txHash: "--",
-          from: "--",
-          to: "--",
-          timestamp: "--",
-          txStatus: item.txStatus,
-        };
-      } else {
-        let result = await getBlockInfo({ txHash: item.txHash });
-        this.blockDetail = result;
-        this.blockDetail.txHash = item.txHash;
-        this.blockDetail.txStatus = item.txStatus;
-      }
-      this.isBlock = true;
-    },
+            departmentScort(params).then(result=>{
+                console.log(result);
+                if(result && result.length > 0){
+                    this.departmentScortList = result;
+                        this.getTotal(this.departmentScortList[0].id);
+                }
+            }).catch(error=>{
+
+            })
+        },
+        lookMore(index){
+            this.loadIcon = true;
+            this.isLook = false;
+            this.organizationParasms.pageNum = this.organizationParasms.pageNum + 1;
+            organizationList(this.organizationParasms).then(result=>{
+                    if(result){
+                        this.listArr[index].userTotal = result.pageCommon.total;
+                        let pageCommon = result.pageCommon.rows.length > 0 ? result.pageCommon.rows : [];
+                        console.log(this.listArr[index].pageCommon,pageCommon);
+                        this.listArr[index].pageCommon = this.listArr[index].pageCommon.concat(pageCommon);  
+                        this.loadIcon = false;
+                        this.isLook = true;
+                    }
+            }).catch(error=>{
+                console.log(error);
+            })
+
+        },
+        //获取架构列表
+        getOrganizationList(num,id,init){
+            this.organizationParasms.parentId = id ? id : '';
+            organizationList(this.organizationParasms).then(result=>{
+                    if(result){
+                        
+                        let obj = {
+                            listNum:num,
+                            departments:result.departments.length > 0 ? result.departments : [],
+                            pageCommon :result.pageCommon.rows.length > 0 ? result.pageCommon.rows : [], 
+                            userTotal:result.pageCommon.total,
+                            // show : null
+                        }
+                        if(obj.departments.length != 0 || obj.pageCommon.length != 0){
+                            this.listArr.push(obj);
+                            
+                        }
+                        if(obj.departments.length != 0 && init && num == 1){
+                                for(let i = 0;i<obj.departments.length;i++){
+                                    if(i === 0){
+                                        this.$set(obj.departments[i],'show',true);
+                                    }else{
+                                        this.$set(obj.departments[i],'show',false);
+                                    }
+                                    
+                                }
+                        }
+                        if(num == 1 && init){
+                            this.curId = obj.departments[0].id
+                            this.getOrganizationList(2,obj.departments[0].id);
+                            this.getInviteNum();
+                        }
+                        if(init){
+                            this.getDepartmentScort(obj.departments[0].id,init);
+                        }else{
+                            this.getDepartmentScort(id);
+                        }
+                    }
+            }).catch(error=>{
+                console.log(error);
+            })
+        },
+        //添加一个列表
+        addList(item,index,organizationInfo,index1){
+                this.organizationParasms.parentId = organizationInfo.id;
+                let tempNum = item.listNum + 1;
+                if(organizationInfo.show == true){
+                   organizationInfo.show = !organizationInfo.show;
+                    this.listArr.splice((index + 1), (this.listArr.length - (index + 1)));
+                    if(this.departmentScortList[index + 1]){
+                        for(let i = 0;i<this.departmentScortList.length;i++){
+                            if(this.departmentScortList[i].name == organizationInfo.name){
+                                console.log(this.departmentScortList[i].name,i,this.departmentScortList);
+                                this.departmentScortList.splice(i,(this.departmentScortList.length - i));
+                            }
+                        }
+                    }else{
+                        this.departmentScortList.splice(index,1);
+                    }
+                    
+                }else{
+                   for(let i = 0;i<this.listArr[index].departments.length;i++){
+                       
+                       if(i == index1){
+                           this.listArr[index].departments[i].show = true;
+                       }else{
+                           this.listArr[index].departments[i].show = false;
+                       }
+                   }
+                   if(this.listArr[index + 1]){
+                        this.listArr.splice((index + 1), (this.listArr.length - (index + 1)));
+                        this.departmentScortList.splice(index,(this.departmentScortList.length - (index + 1)));
+                        this.getOrganizationList(tempNum,this.organizationParasms.parentId);
+                    }else{
+                        this.getOrganizationList(tempNum,this.organizationParasms.parentId);
+                    } 
+                }
+        },
+    async getTxDetail(item){
+
+            if(item.txStatus==2 || item.txStatus==1 || !item.txStatus){
+               this.blockDetail ={
+                  blockNumber: "--",
+                  blockHash: "--",
+                  txHash:'--',
+                  from: "--",
+                  to: "--" ,
+                  timestamp: '--',
+                  txStatus:item.txStatus
+               }
+            }else{
+                let result =await getBlockInfo({txHash:item.txHash})
+                this.blockDetail=result;
+                this.blockDetail.txHash=item.txHash;
+                this.blockDetail.txStatus=item.txStatus;
+                
+                
+            }
+            this.isBlock=true
+        },
     nodeExpand(nodeObj, node, cur) {
       var theChildren = node.childNodes;
 
@@ -556,7 +439,7 @@ export default {
       }
       let arr = [];
       let setCheckedKey = [];
-      theChildren.map((item) => {
+      theChildren.map(item => {
         item.data.disabled = node.checked || node.disabled;
         this.detailInfo.departments_ids.indexOf(item.data.id) >= 0
           ? setCheckedKey.push(item.data.id)
@@ -570,7 +453,7 @@ export default {
       this.$forceUpdate();
     },
     dg(arr, fn, parent) {
-      arr.map((item) => {
+      arr.map(item => {
         fn(item, parent);
         if (!!item.child && item.child.length > 0) {
           this.dg(item.child, fn, item);
@@ -580,8 +463,8 @@ export default {
     },
     getDeparts() {
       let params = { id: this.$parent.userinfo.id };
-      getDepartTreeListHAuth(params).then((result) => {
-        result.map((item) => {
+      getDepartTreeListHAuth(params).then(result => {
+        result.map(item => {
           if (this.detailInfo.departments_ids.indexOf(item.id) >= 0) {
             item.checked = true;
           } else {
@@ -592,7 +475,7 @@ export default {
         let that = this;
         let result_ = this.dg(
           result,
-          function (value, obj) {
+          function(value, obj) {
             if (obj) {
               value.disabled = !!obj.checked || !!obj.disabled;
             }
@@ -696,13 +579,13 @@ export default {
     async getKey() {
       let parasms = {
         id: this.detailInfo.id,
-        departmentIds: this.$refs.tree.getCheckedKeys(),
+        departmentIds: this.$refs.tree.getCheckedKeys()
       };
 
       let result = await userAddPermissions(parasms);
       this.$message({
         message: "设置成功！",
-        type: "success",
+        type: "success"
       });
       this.isSetting = false;
       this.getAccountList();
@@ -712,7 +595,7 @@ export default {
       if (item.status == 1) {
         this.$message({
           message: "停用后才可设定组织，请先完成“停用”操作！",
-          type: "warning",
+          type: "warning"
         });
         return;
       }
@@ -741,9 +624,8 @@ export default {
       this.getAccountList();
     },
     changeAmountTwo() {
-      this.addParams.phone = this.addParams.phone
-        .toString()
-        .replace(/[^\d]/g, "");
+
+      this.addParams.phone = this.addParams.phone.toString().replace(/[^\d]/g, "");
     },
     changeAmount() {
       this.tempObj.phone = this.tempObj.phone.toString().replace(/[^\d]/g, "");
@@ -752,74 +634,62 @@ export default {
       if (!params.username || params.username.length < 1) {
         this.$message({
           message: "请输入账号！",
-          type: "error",
+          type: "error"
         });
         return false;
       }
-      if (params.username.length > 16) {
-        this.$message({
-          message: "账号必须是小于16位的英文或数字",
-          type: "error",
-        });
-        return false;
-      }
-      var re = /^[a-zA-Z0-9]+$/;
-      if (!re.test(params.username)) {
-        this.$message({
-          message: "账号必须是小于16位的英文或数字",
-          type: "error",
-        });
-        return false;
-      }
-      if (params.username.length > 16) {
-        this.$message({
-          message: "账号必须是小于16位的英文或数字",
-          type: "error",
-        });
-        return false;
-      }
-      var re = /^[a-zA-Z0-9]+$/;
-      if (!re.test(params.username)) {
-        this.$message({
-          message: "账号必须是小于16位的英文或数字",
-          type: "error",
-        });
-        return false;
-      }
-      if (!params.realName || params.realName.length < 1) {
-        this.$message({
-          message: "请输入姓名！",
-          type: "error",
-        });
-        return false;
-      }
-      if (params.realName.length > 16) {
-        this.$message({ message: "姓名必须小于16位", type: "error" });
-        return false;
-      }
-      if (params.realName.length > 16) {
-        this.$message({ message: "姓名必须小于16位", type: "error" });
-        return false;
-      }
+        if(params.username.length>16){
+                this.$message({message:'账号必须是小于16位的英文或数字',type:'error'})
+                return false;
+            }
+            var re = /^[a-zA-Z0-9]+$/;
+            if(!re.test(params.username)){
+                this.$message({message:'账号必须是小于16位的英文或数字',type:'error'})
+                return false;
+            }
+       if(params.username.length>16){
+                this.$message({message:'账号必须是小于16位的英文或数字',type:'error'})
+                return false;
+            }
+            var re = /^[a-zA-Z0-9]+$/;
+            if(!re.test(params.username)){
+                this.$message({message:'账号必须是小于16位的英文或数字',type:'error'})
+                return false;
+            }
+            if (!params.realName || params.realName.length < 1) {
+              this.$message({
+                message: "请输入姓名！",
+                type: "error"
+              });
+              return false;
+            }
+            if(params.realName.length>16){
+                this.$message({message:'姓名必须小于16位',type:'error'})
+                return false;
+            }
+      if(params.realName.length>16){
+                this.$message({message:'姓名必须小于16位',type:'error'})
+                return false;
+            }
       if (!params.phone || params.phone.length < 1) {
         this.$message({
           message: "请输入手机号！",
-          type: "error",
+          type: "error"
         });
         return false;
       }
-      if (!/^1[3|4|5|6|9|7|8]\d{9}$/.test(params.phone)) {
-        this.$message({
-          message: "手机格式有误！",
-          type: "error",
-        });
-        return false;
-      }
-
+      if(!(/^1[3|4|5|6|9|7|8]\d{9}$/.test(params.phone))){ 
+             this.$message({
+                message: "手机格式有误！",
+                type: "error"
+            });
+            return false; 
+      } 
+      
       if (!params.roleIds || params.roleIds.length == 0) {
         this.$message({
           message: "请选择用户角色！",
-          type: "error",
+          type: "error"
         });
         return false;
       }
@@ -836,23 +706,23 @@ export default {
       this.dialogFormUserinfo = true;
     },
     async editData() {
-      let departments = await getSysUserDepartmentList({ id: this.tempObj.id });
-      let valueInfo = {
-        username: this.tempObj.username,
-        pubKey: this.tempObj.pubKey,
-        realName: sha256(this.tempObj.realName),
-        phone: sha256(this.tempObj.phone),
-        department: sha256(departments),
-        desc: "编辑成员",
-      };
-      let txSign = await this.txSign(3, valueInfo, this.tempObj.username);
+      let departments = await getSysUserDepartmentList({id:this.tempObj.id})
+       let valueInfo={
+        username:this.tempObj.username,
+        pubKey:this.tempObj.pubKey,
+        realName:sha256(this.tempObj.realName),
+        phone:sha256(this.tempObj.phone),
+        department:sha256(departments),
+        desc:'编辑成员'
+      }
+      let txSign =await this.txSign(3,valueInfo,this.tempObj.username);
       this.ruleForm.phone = this.tempObj.phone;
       this.ruleForm.username = this.tempObj.username;
       this.ruleForm.realName = this.tempObj.realName;
       this.ruleForm.roleIds = [];
       // this.ruleForm.roleIds.push(this.tempObjroleIds);
       this.ruleForm.id = this.tempObj.id;
-      this.ruleForm.txSign = txSign;
+      this.ruleForm.txSign=txSign
       // this.ruleForm.roleIds = [];
       // this.ruleForm.roleIds.push(this.tempObjroleIds);
       this.ruleForm.id = this.tempObj.id;
@@ -862,51 +732,48 @@ export default {
       let result = await apiEditOrAddUser(this.ruleForm);
       this.$message({
         message: "修改成功！",
-        type: "success",
+        type: "success"
       });
       this.dialogFormUserinfo = false;
       this.getAccountList();
     },
     async resetPws(item) {
-      if (item.txStatus == 1) {
-        this.$message({
-          message: "上链中，无法进行此操作，请稍后再试",
-          type: "error",
-        });
-        return;
+       if(item.txStatus==1){
+          this.$message({message:'上链中，无法进行此操作，请稍后再试',type:'error'})
+          return
       }
-      let departments = await getSysUserDepartmentList({ id: item.id });
-      // {“username”:”zhangsan”,”pubKey”:”12322”,”realName”:”张三”,”phone”:”18800989898”,”department”:”[金融-金融1，销售-前端-前端1]”,”desc”:”描述”}
-      let valueInfo = {
-        username: item.username,
-        pubKey: item.pubKey,
-        realName: sha256(item.realName),
-        phone: sha256(item.phone),
-        department: sha256(departments),
-        desc: "重置密码",
-      };
-      let txSign = await this.txSign(3, valueInfo, item.username);
+      let departments = await getSysUserDepartmentList({id:item.id})
+            // {“username”:”zhangsan”,”pubKey”:”12322”,”realName”:”张三”,”phone”:”18800989898”,”department”:”[金融-金融1，销售-前端-前端1]”,”desc”:”描述”}
+            let valueInfo={
+              username:item.username,
+              pubKey:item.pubKey,
+              realName:sha256(item.realName),
+              phone:sha256(item.phone),
+              department:sha256(departments),
+              desc:'重置密码'
+            }
+            let txSign =await this.txSign(3,valueInfo,item.username);
       let params = {
         id: item.id,
-        txSign: txSign,
+          txSign:txSign
       };
       let result = await apiResetPaws(params);
       this.$message({
         message: "重置成功！",
-        type: "success",
+        type: "success"
       });
       this.getAccountList();
     },
     async getAccountList() {
       let result = await apiAccountList(this.accountParams);
-      this.accountList = result.rows.map((item) => {
+      this.accountList = result.rows.map(item => {
         item.departments_ =
           item.departments.length > 0
-            ? item.departments.map((item) => item.name).join(",")
+            ? item.departments.map(item => item.name).join(",")
             : "";
         item.departments_ids =
           item.departments.length > 0
-            ? item.departments.map((item) => item.id)
+            ? item.departments.map(item => item.id)
             : [];
         return item;
       });
@@ -925,39 +792,37 @@ export default {
       this.options = result;
     },
     logout() {
-      apiUserLogout().then((resposne) => {
+      apiUserLogout().then(resposne => {
         sessionStorage.clear();
         this.$router.push({ path: "/" });
       });
     },
     async deleteAccount(item) {
-      if (item.txStatus == 1) {
-        this.$message({
-          message: "上链中，无法进行此操作，请稍后再试",
-          type: "error",
-        });
-        return;
+       if(item.txStatus==1){
+          this.$message({message:'上链中，无法进行此操作，请稍后再试',type:'error'})
+          return
       }
-      let departments = await getSysUserDepartmentList({ id: item.id });
-
-      let valueInfo = {
-        username: item.username,
-        pubKey: item.pubKey,
-        realName: sha256(item.realName),
-        phone: sha256(item.phone),
-        department: sha256(departments),
-        desc: "删除成员",
-      };
-      let txSign = await this.txSign(3, valueInfo, item.username);
-
+      let departments = await getSysUserDepartmentList({id:item.id})
+     
+            let valueInfo={
+              username:item.username,
+              pubKey:item.pubKey,
+              realName:sha256(item.realName),
+              phone:sha256(item.phone),
+              department:sha256(departments),
+              desc:'删除成员'
+            }
+            let txSign =await this.txSign(3,valueInfo,item.username);
+      
       let params = {
         id: item.id,
-        txSign: txSign,
+        txSign:txSign
+
       };
       let result = await apiDeleteAccount(params);
       this.$message({
         message: "删除成功！",
-        type: "success",
+        type: "success"
       });
       this.getAccountList();
     },
@@ -967,7 +832,7 @@ export default {
         username: "",
         realName: "",
         roleIds: [],
-        id: "",
+        id: ""
       };
       this.addIsDloag = true;
     },
@@ -976,38 +841,35 @@ export default {
         if (item.departments.length == 0) {
           this.$message({
             message: "请先设置组织机构才能启用",
-            type: "warning",
+            type: "warning"
           });
           return;
         }
       }
-      if (item.txStatus == 1) {
-        this.$message({
-          message: "上链中，无法进行此操作，请稍后再试",
-          type: "error",
-        });
-        return;
+      if(item.txStatus==1){
+          this.$message({message:'上链中，无法进行此操作，请稍后再试',type:'error'})
+          return
       }
-      let departments = await getSysUserDepartmentList({ id: item.id });
-      // {“username”:”zhangsan”,”pubKey”:”12322”,”realName”:”张三”,”phone”:”18800989898”,”department”:”[金融-金融1，销售-前端-前端1]”,”desc”:”描述”}
-      let valueInfo = {
-        username: item.username,
-        pubKey: item.pubKey,
-        realName: sha256(item.realName),
-        phone: sha256(item.phone),
-        department: sha256(departments),
-        desc: num == 2 ? "停用成员" : "启用成员",
-      };
+            let departments = await getSysUserDepartmentList({id:item.id})
+            // {“username”:”zhangsan”,”pubKey”:”12322”,”realName”:”张三”,”phone”:”18800989898”,”department”:”[金融-金融1，销售-前端-前端1]”,”desc”:”描述”}
+            let valueInfo={
+              username:item.username,
+              pubKey:item.pubKey,
+              realName:sha256(item.realName),
+              phone:sha256(item.phone),
+              department:sha256(departments),
+              desc:num==2?'停用成员':'启用成员'
+            }
       let state = num == 2 ? "停用" : "启用";
       let params = {
         id: item.id,
         status: num,
-        txSign: await this.txSign(3, valueInfo, item.username),
+         txSign:await this.txSign(3,valueInfo,item.username)
       };
       let result = await apiOptionAccount(params);
       this.$message({
         message: state + "成功！",
-        type: "success",
+        type: "success"
       });
       this.getAccountList();
     },
@@ -1015,39 +877,39 @@ export default {
       if (!this.isChecked(this.addParams)) {
         return;
       }
-      let valueInfo = {
-        username: this.addParams.username,
-        pubKey: "",
-        realName: sha256(this.addParams.realName),
-        phone: sha256(this.addParams.phone),
-        department: [],
-        desc: "新增成员",
-      };
-      let txSign = await this.txSign(3, valueInfo, this.addParams.username);
-
-      this.addParams.txSign = txSign;
+      let valueInfo={
+        username:this.addParams.username,
+        pubKey:'',
+        realName:sha256(this.addParams.realName),
+        phone:sha256(this.addParams.phone),
+        department:[],
+        desc:'新增成员'
+      }
+      let txSign =await this.txSign(3,valueInfo,this.addParams.username);
+      
+      this.addParams.txSign=txSign;
       let result = await apiEditOrAddUser(this.addParams);
-      this.$parent.getUserInfo();
+      this.$parent.getUserInfo()
       this.$message({
         message: "新增成功！",
-        type: "success",
+        type: "success"
       });
       this.addIsDloag = false;
       this.listArr = [];
-      this.getOrganizationList(1, "", true);
+      this.getOrganizationList(1,'',true);
     },
     handleCurrentChange(val) {
       this.accountParams.pageNum = val;
       this.getAccountList();
-    },
+    }
   },
   created() {
     this.$parent.getUserInfo_();
-    this.userInfo = JSON.parse(sessionStorage.getItem("user"));
-    this.getOrganizationList(1, "", true);
+    this.userInfo = JSON.parse(sessionStorage.getItem('user'));
+            this.getOrganizationList(1,'',true);
     // this.getAccountList();
     this.getRoleList();
-  },
+  }
 };
 </script>
 <style lang="scss" scoped>
@@ -1055,20 +917,19 @@ export default {
 @import "~assets/css/mixin";
 </style>
 <style>
-#account .blockDetail .el-form-item__content,
-#account .blockDetail .el-form-item__label {
-  font-size: 0.8rem !important;
-  line-height: 1.4rem !important;
+#account .blockDetail   .el-form-item__content, #account .blockDetail   .el-form-item__label{
+    font-size:0.8rem !important;
+    line-height:1.4rem !important;
 }
 
-#account .blockDetail .el-form-item--mini.el-form-item {
-  margin-bottom: 0rem !important;
+#account .blockDetail .el-form-item--mini.el-form-item{
+    margin-bottom:0rem !important;
 }
-#account .errorColor {
-  color: #ed1c24;
+#account .errorColor{
+    color:#ED1C24;
 }
-#account .txStatus {
-  cursor: pointer;
+#account .txStatus{
+    cursor:pointer;
 }
 #account .el-input {
   width: 16.9rem;
@@ -1174,7 +1035,7 @@ export default {
 #account .dialog-footer {
   text-align: left;
 }
-#account .el-scrollbar__wrap {
-  overflow-x: hidden !important;
+#account .el-scrollbar__wrap{
+    overflow-x:hidden!important;
 }
 </style>
