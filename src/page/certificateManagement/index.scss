@@ -1,0 +1,218 @@
+@import "~assets/css/mixin";
+
+#certificate {
+  width: 100%;
+  height: 100%;
+
+  .serchCondition {
+    width: 100%;
+    height: rempx(40);
+    display: -ms-flex;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+
+    .top_right,
+    .top_left {
+      display: flex;
+    }
+
+    .top_right>div {
+      margin-left: 0.5rem
+    }
+
+    .number {
+
+      .fontColor1 {
+        color: #848484;
+        font-size: 0.8rem;
+      }
+
+      .fontColor {
+        color: #F76A0D;
+        font-size: 0.8rem;
+      }
+    }
+
+    .addBtn1 {
+      width: rempx(100);
+      height: rempx(40);
+      line-height: rempx(40);
+      border-radius: rempx(4);
+      text-align: center;
+      color: #fff;
+      font-size: rempx(16);
+      background-color: #848484;
+      cursor: pointer;
+
+    }
+
+    .addBtn {
+      width: rempx(100);
+      height: rempx(40);
+      line-height: rempx(40);
+      border-radius: rempx(4);
+      text-align: center;
+      color: #fff;
+      font-size: rempx(16);
+      background-color: #F76A0D;
+      cursor: pointer;
+
+    }
+
+    .addBtn2 {
+      width: rempx(120);
+      height: rempx(40);
+      line-height: rempx(40);
+      border-radius: rempx(4);
+      text-align: center;
+      color: #fff;
+      font-size: rempx(16);
+      background-color: #848484;
+      cursor: pointer;
+
+    }
+
+    .addBtn3 {
+      width: rempx(120);
+      height: rempx(40);
+      line-height: rempx(40);
+      border-radius: rempx(4);
+      text-align: center;
+      color: #fff;
+      font-size: rempx(16);
+      background-color: #F76A0D;
+      cursor: pointer;
+
+    }
+
+    .out {
+      margin-right: rempx(10);
+    }
+
+    .el-range-editor.el-input__inner {
+      width: rempx(266);
+      height: rempx(40);
+      padding: rempx(3) rempx(10);
+    }
+
+    .el-select {
+      font-size: rempx(14);
+      width: rempx(180);
+      height: rempx(40);
+    }
+
+    .servhBtn {
+      width: rempx(80);
+      height: rempx(40);
+      line-height: rempx(40);
+      border-radius: rempx(4);
+      color: #fff;
+      background-color: #F76A0D;
+      font-size: rempx(16);
+      text-align: center;
+      cursor: pointer;
+    }
+
+
+  }
+
+  .main {
+    margin-top: rempx(52);
+
+    .color {
+      color: #F76A0D;
+      padding-left: rempx(10);
+      cursor: pointer;
+    }
+
+    .optionOne {
+      color: #C8C8C8;
+      font-size: rempx(14);
+      padding-right: rempx(10);
+    }
+
+    .more {
+      color: #F76A0D;
+      font-size: rempx(16);
+      cursor: pointer;
+
+      .componentsListOut {
+        width: 100%;
+
+        .componentsListOutRow {
+          margin-bottom: rempx(26);
+        }
+      }
+
+    }
+  }
+
+  .toFlex {
+    display: flex;
+    align-items: center;
+  }
+
+  .upFileBtn1 {
+    color: #AAAAAA;
+    cursor: pointer;
+  }
+
+  .upFileText {
+    color: #AAAAAA;
+  }
+
+  .upFileBtn2 {
+    color: #FF6600;
+    cursor: pointer;
+  }
+
+  .hasUpList {
+    list-style-type: none;
+    margin: 5px 0;
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 5px;
+    }
+
+    .toDelete {
+      display: inline-block;
+      width: 0.5rem;
+      height: 0.5rem;
+      background: url('../../assets/img/moreDelete.png')no-repeat;
+      background-size: 100% 100%;
+      cursor: pointer;
+    }
+
+    .toDeleteAll {
+      display: inline-block;
+      font-size: 12px;
+      height: 0.5rem;
+      cursor: pointer;
+    }
+
+    .rightFiles {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .errorFiles {
+      margin-top: 10px;
+      color: rgb(233, 86, 86);
+      font-weight: bold;
+    }
+
+    .chageBg {
+      background: rgb(238, 238, 238);
+      color: black;
+    }
+
+  }
+
+
+
+}

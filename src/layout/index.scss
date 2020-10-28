@@ -1,0 +1,237 @@
+@import "~assets/css/mixin";
+
+#rose-layout {
+  height: 100%;
+  width: 100%;
+  display: -ms-flex;display:flex;
+  background-color: #fff;
+  .leftnav{
+    width: rempx(240);
+    height: 100%;
+    background: #F9F9F9;
+    text-align: center;
+    .logo{
+      width: 100%;
+      // height: rempx(100);
+      color: #fff;
+      font-size: rempx(36);
+      text-align: center;
+      line-height: rempx(100);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      img{
+        width: rempx(135);
+        height: rempx(105);
+        margin:rempx(20) auto 0;
+      }
+    }
+    .top{
+      font-size: 1.1rem;
+      color: #848484;
+      width: 100%;
+      text-align: center;
+      margin-top: 0.5rem;
+    }
+    .clickNav{
+      margin: rempx(57) 0 0;
+      padding: 0;
+      li{
+        display: -ms-flex;display:flex;
+        align-items: center;
+        border-left: rempx(6) solid #F9F9F9;
+        width: 100%;
+        height: rempx(65);
+        cursor: pointer;
+        font-size: rempx(18);
+        color: #363636;
+        padding-left: rempx(55);
+        // .img1{
+        //   width: rempx(17);
+        //   height: rempx(19);
+        //   margin-right: rempx(16);
+        //   background: url("../assets/img/yonghu.png") no-repeat center;
+        //   background-size: contain;
+        // }
+        // .img2{
+        //   width: rempx(17);
+        //   height: rempx(19);
+        //   margin-right: rempx(16);
+        //   background: url("../assets/img/chengyuan.png") no-repeat center;
+        //   background-size: contain;
+        // }
+        // .img3{
+        //   width: rempx(17);
+        //   height: rempx(19);
+        //   margin-right: rempx(16);
+        //   background: url("../assets/img/message.png") no-repeat center;
+        //   background-size: contain;
+        // }
+        .img1{
+          width: rempx(17);
+          height: rempx(19);
+          margin-right: rempx(16);
+          background: url("../assets/img/product.png") no-repeat center;
+          background-size: contain;
+        }
+        .img2{
+          width: rempx(17);
+          height: rempx(19);
+          margin-right: rempx(16);
+          background: url("../assets/img/chengyuan.png") no-repeat center;
+          background-size: contain;
+        }
+        .img5{
+          width: rempx(17);
+          height: rempx(19);
+          margin-right: rempx(16);
+          background: url("../assets/img/moban.png") no-repeat center;
+          background-size: contain;
+        }
+        .img6{
+          width: rempx(17);
+          height: rempx(19);
+          margin-right: rempx(16);
+          background: url("../assets/img/department.png") no-repeat center;
+          background-size: contain;
+        }
+      }
+      li:hover{
+        background-color: #fff;
+        border-left: rempx(6) solid #F76A0D;
+        // border-radius:0 rempx(11) rempx(11) 0;
+        color: #F76A0D;
+        .img5{
+          width: rempx(17);
+          height: rempx(19);
+          margin-right: rempx(16);
+          background: url("../assets/img/moban1.png") no-repeat center;
+          background-size: contain;
+        }
+        .img1{
+          width: rempx(17);
+          height: rempx(19);
+          margin-right: rempx(16);
+          background: url("../assets/img/product1.png") no-repeat center;
+          background-size: contain;
+        }
+        .img2{
+          width: rempx(17);
+          height: rempx(19);
+          margin-right: rempx(16);
+          background: url("../assets/img/chengyuan1.png") no-repeat center;
+          background-size: contain;
+        }
+      
+        .img6{
+          width: rempx(17);
+          height: rempx(19);
+          margin-right: rempx(16);
+          background: url("../assets/img/department1.png") no-repeat center;
+          background-size: contain;
+        }
+      }
+      .activeNav{
+        background-color: #fff;
+        border-left: rempx(6) solid #F76A0D;
+        // border-radius:0 rempx(11) rempx(11) 0;
+        color: #F76A0D;
+        .img5{
+          width: rempx(17);
+          height: rempx(19);
+          margin-right: rempx(16);
+          background: url("../assets/img/moban1.png") no-repeat center;
+          background-size: contain;
+        }
+        .img1{
+          width: rempx(17);
+          height: rempx(19);
+          margin-right: rempx(16);
+          background: url("../assets/img/product1.png") no-repeat center;
+          background-size: contain;
+        }
+        .img2{
+          width: rempx(17);
+          height: rempx(19);
+          margin-right: rempx(16);
+          background: url("../assets/img/chengyuan1.png") no-repeat center;
+          background-size: contain;
+        }
+        .img6{
+          width: rempx(17);
+          height: rempx(19);
+          margin-right: rempx(16);
+          background: url("../assets/img/department1.png") no-repeat center;
+          background-size: contain;
+        }
+      }
+      .dian{
+        display: inline-block;
+        width: rempx(6);
+        height: rempx(6);
+        border-radius: 50%;
+        margin-left: rempx(56);
+        background-color: #F76A0D;
+      }
+    }
+  }
+  .right{
+    width: 100%;
+    height: 100%;
+    display: -ms-flex;display:flex;
+    flex: 1;-ms-flex:1;
+    flex-direction: column;
+    .rightTop{
+      width: 100%;
+      height:rempx(80);
+      border-bottom: 1px solid #ECF0F1;
+      display: -ms-flex;display:flex;
+       justify-content:flex-end;
+      align-items: center;
+      position: relative;
+      .mianbaoxue{
+        position: absolute;
+        left: 0;
+        padding-left: rempx(81);
+      }
+      .userOut{
+        
+        margin-right: rempx(95);
+       
+        display: -ms-flex;display:flex;
+        flex-direction: initial;
+        align-items: center;
+        // position: absolute;
+        // right: 0;
+        img{
+          width: rempx(24);
+          cursor: pointer;
+          height: rempx(22);
+          margin-right: rempx(10);
+          // margin-right: rempx(-111);
+          // position: relative;
+          // left:rempx(-120)
+          // display:inline-block;
+          // vertical-align: middle;
+        }
+        .userName{
+          cursor: pointer;
+          font-size: rempx(17);
+          // display:inline-block;
+          // vertical-align: middle;
+          color: #363636;
+        }
+      }
+    }
+    .rightMain{
+      height: 100%;
+      width: 100%;
+      // overflow-y: scroll;
+      padding: rempx(51) rempx(81);
+      flex: 1;-ms-flex:1;
+      overflow: auto;
+    }
+  }
+  
+}
+

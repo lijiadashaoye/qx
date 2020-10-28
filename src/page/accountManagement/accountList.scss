@@ -1,0 +1,130 @@
+ /*************************************************************************
+ * Copyright (C) 2016-2020 PDX Technologies, Inc. All Rights Reserved. 
+ *************************************************************************/
+ @import "~assets/css/mixin";
+#account
+{
+ width: 100%;
+ height: 100%;
+ .serchCondition{
+     width: 100%;
+     height: rempx(40);
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     position: relative;
+     .left{
+        display: flex;
+        justify-content: flex-start;
+        .out{
+            margin-right: rempx(10);
+        }
+        .el-range-editor.el-input__inner{
+            width: rempx(350);
+            height: rempx(40);
+            padding: rempx(3) rempx(10);
+        }
+        .el-select{
+            font-size: rempx(14);
+            width:rempx(180);
+            height: rempx(40);
+        }
+        .servhBtn{
+           padding:0 1rem;
+            height: rempx(40);
+            line-height: rempx(40);
+            border-radius: rempx(4);
+            color: #fff;
+            background-color: #F76A0D;
+            font-size: rempx(16);
+            text-align: center;
+            cursor: pointer;
+        }
+    }
+    .right{
+        display: flex;
+        justify-content:flex-end;
+        align-items: center;
+        .titleWorld{
+            font-size: rempx(16);
+            color: #848484;
+            padding-right: rempx(19);
+        }
+        .fontColor{
+            font-size: rempx(16);
+            color: #F76A0D;
+        }
+        .btnInvite{
+            width: rempx(136);
+            height: rempx(40);
+            line-height: rempx(40);
+            text-align: center;
+            font-size: 0.8rem;
+            color: #fff;
+            cursor: pointer;
+            background-color: #F76A0D;
+            border-radius: rempx(3);
+            margin-right: rempx(8);
+        }
+        .btnInvite3{
+            cursor: default;
+            background-color: #848484;
+        }
+    }
+    //  .out{
+    //      margin-right: rempx(40);
+    //  }
+    //  .el-select{
+    //      font-size: rempx(14);
+    //      width:rempx(338);
+    //      height: rempx(40);
+    //  }
+    //  .servhBtn{
+    //      padding:0 1rem;
+    //      height: rempx(40);
+    //      line-height: rempx(40);
+    //      border-radius: rempx(4);
+    //      color: #fff;
+    //      background-color: #F76A0D;
+    //      font-size: rempx(16);
+    //      text-align: center;
+    //      cursor: pointer;
+    //  }
+ }
+ .back{
+    font-size: rempx(14);
+    color: #363636;
+    cursor: pointer;
+    text-align:left;
+    margin-top:-32px;
+    line-height:32px;
+}
+ .main{
+     margin-top: rempx(52);
+ }
+ .sureBtnOut{
+    width: 100%;
+    display: flex;
+    margin-top: 1.1rem;
+    padding-bottom: 1.5rem;
+     .canlce,.sure{
+         width: 4rem;
+         height: 2rem;
+         text-align: center;
+         line-height: 2rem;
+         font-size: 0.7rem;
+         cursor: pointer;
+     }  
+     .canlce{
+       border: 1px solid #dedede;
+       border-radius: 0.2rem;
+       color: #363636;
+       margin-right: 0.5rem;
+     }
+     .sure{
+         color: #fff;
+         background-color: #FF6600;
+         border-radius: 0.2rem;
+     }
+}
+}

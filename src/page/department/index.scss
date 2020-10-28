@@ -1,0 +1,235 @@
+/*************************************************************************
+ * Copyright (C) 2016-2020 PDX Technologies, Inc. All Rights Reserved. 
+ *************************************************************************/
+ @import "~assets/css/mixin";
+ #department
+ {
+  width: 100%;
+  height: 100%;
+ //  background-color: #fff;
+  .serchOut{
+      width: 100%;
+      height: rempx(36);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .fontColor1{
+          color: #848484;
+          font-size: 0.7rem;
+      }
+      .fontColor{
+         color: #F57723;
+         font-size: 0.7rem;
+      }
+      .tip{
+         color: #AAAAAA;
+         font-size: rempx(15);
+         padding-right: rempx(20); 
+      }
+      .btnOut{
+          display: flex;
+          justify-content: flex-start;
+      }
+      .input{
+          width: rempx(280);
+          margin-left: rempx(10);
+      }
+     .importDepartment,.addDepartmentBtn{
+          padding:0 rempx(20);
+          height: rempx(40);
+          text-align: center;
+          font-size: 0.8rem;
+          color: #fff;
+          background-color: #F76A0D;
+          line-height: rempx(40);
+          cursor: pointer;
+          border-radius: rempx(3);
+          margin-left: rempx(10);
+      }
+  }
+  .border{
+      width: 100%;
+      height: 1px;
+      background-color: #DEDEDE;
+      margin-top: rempx(40);
+      margin-bottom: rempx(25);
+  }
+  .levelOut{
+    font-size: rempx(18);
+    .level{
+        font-size: rempx(14);
+    }
+    .isColor{
+        color: #AAAAAA;
+    }
+ }
+  .listMain{
+     margin-top: rempx(17);
+     margin-bottom: rempx(20);
+     height: rempx(680);
+     width:100%;
+     max-width: rempx(1400);
+     overflow-x: auto;
+     display: flex;
+     justify-content: flex-start;
+     
+     .list{
+         min-width: rempx(220);
+         transition: 1.5s all;
+         height: 100%;
+         overflow-y: hidden;
+         background-color: #fff;
+         border:1px solid #dedede;
+         .topInfo{
+             width: 100%;
+             padding: rempx(16) rempx(14);
+             height: rempx(74);
+             display: flex;
+             align-items: center;
+             font-size: rempx(14);
+             flex-direction: column;
+             border-bottom: 1px solid #dedede;
+             .fontColor4{
+                 color: #363636;
+                 padding-right: rempx(15);
+                 cursor: default;
+             }
+             .fontColor{
+                 color: #F76A0D;
+             }
+             .fontColor3{
+                 color: #F76A0D;
+                 padding-right: rempx(15);
+                 cursor: pointer;
+             }
+             .number{
+                 width: 100%;
+                 text-align: left;
+             }
+             .number1{
+                 margin-bottom: rempx(5);
+             }
+         }
+         .organizationTit{
+            margin-top: rempx(18);
+            // width: 100%;
+            margin-left: rempx(14);
+            margin-right: rempx(14);
+            border-bottom: 1px solid #dedede;
+            font-size: rempx(16);
+            // padding: 0 rempx(14) 0 0;
+            padding-bottom: rempx(8);
+            color: #363636;
+         }
+         .organizationName{
+             width: 100%;
+             min-height: rempx(56);
+             font-size: rempx(14);
+             color: #363636;
+             display: flex;
+             flex-direction: column;
+             cursor: pointer;
+             padding: rempx(11) rempx(14) rempx(8);
+             .organizationNick{
+                 display: flex;
+                //  margin-top: rempx(11);
+                //  margin-bottom: rempx(5);
+                 justify-content: space-between;
+                 align-items: center;
+                .el-icon-arrow-right{
+                    font-size: rempx(14);
+                    color: #363636;
+                    // line-height: rempx(30);
+                }
+             }
+             .organizationInfo{
+                 display: flex;
+                 justify-content: flex-start;
+                 font-size: rempx(12);
+                 color: #AAAAAA;
+             }
+         }
+         .organizationName:hover{
+            width: 100%;
+            min-height: rempx(56);
+            font-size: rempx(14);
+            color: #363636;
+            background-color: #ededf2;
+            transition: 0.3s all;
+        }
+        .isorganizationName{
+            background-color: #ededf2;
+        }
+        .accountTit{
+            margin-top: rempx(18);
+            // width: 100%;
+            margin-left: rempx(14);
+            margin-right: rempx(14);
+            border-bottom: 1px solid #dedede;
+            font-size: rempx(16);
+            // padding: 0 rempx(14) 0 0;
+            padding-bottom: rempx(8);
+            color: #F76A0D;
+            cursor: pointer;
+        }
+        .accountName{
+            height: rempx(30);
+            line-height: rempx(30);
+            color: #363636;
+            cursor: pointer;
+            padding: 0 rempx(14);
+            font-size: rempx(14);
+        }
+        .accountName:hover{
+            background-color: #ededf2;
+        }
+        .click{
+            color: #F76A0D;
+            font-size: rempx(14);
+            height: rempx(30);
+            line-height: rempx(30);
+            padding: 0 rempx(14);
+            cursor: pointer;
+        }
+     }
+  }
+  .dilaogBtn{
+     margin-top: 1.5rem;
+     display: flex;
+     align-items: center;
+     padding-bottom: rempx(36);
+     div{
+       width: rempx(68);
+       height: rempx(36);
+       font-size: 0.7rem;
+       text-align: center;
+       cursor: pointer;
+       line-height: rempx(36);
+       border-radius:rempx(3);
+     }
+     .clance{
+       background-color: #fff;
+       color: #303133;
+       margin-right: rempx(10);
+       border: rgba(220,223,230,1) 1px solid;
+     }
+     .sure{
+      background-color: #F57723;
+      color: #fff;
+     }
+   }
+   .border{
+     width: 100%;
+     height: 1px;
+     background:rgba(235,238,245,1);
+   }
+   .diloagTit{
+     color: #363636;
+     font-size: 0.7rem;
+     line-height: rempx(24);
+     word-break: break-all;
+   }
+  .elRow{
+     margin-top: rempx(10);
+   }
+ }

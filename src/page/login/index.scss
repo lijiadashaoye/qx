@@ -1,0 +1,93 @@
+ /*************************************************************************
+ * Copyright (C) 2016-2020 PDX Technologies, Inc. All Rights Reserved. 
+ *************************************************************************/
+ @import "~assets/css/mixin";
+#loginPage
+{
+ width: 100%;
+ height: 100%;
+ background-color: #fff;
+ display: flex;
+ position: relative;
+ .left{
+   position: relative;
+   width: 46%;
+   height: 100%;
+   border-right: 1px solid #EDEDF2;
+   .titleTop{
+    margin:rempx(100) 0 0; 
+    text-align: center;
+       .logoSmall{
+         width: rempx(180);
+         height: rempx(140);
+         background: url("../../assets/img/loginTop.png") no-repeat center;
+         background-size: cover;
+         margin: 0 auto;
+       }
+       div{
+         font-size: rempx(40);
+         color: #848484;
+       }
+  }
+  .loginOut{
+     width: rempx(400);
+     position: absolute;
+     top: 40%;
+     left:50%;
+     transform: translateX(-50%);
+     .loginName{
+       color: #848484;
+       text-align: center;
+       font-size:rempx(32);
+       margin-bottom: rempx(25);
+     }
+    .inputOut{
+      position: relative;
+      margin-bottom: rempx(20);
+      img{
+        position: absolute;
+        top: 50%;
+        left: 0;
+        transform: translateY(-50%);
+        width: rempx(22);
+        height: rempx(25);
+        z-index: 1;
+      }
+    }
+    .loginBtn{
+      width: 100%;
+      height: rempx(48);
+      line-height: rempx(48);
+      color:#fff;
+      text-align: center;
+      font-size: 0.9rem;
+      border-radius:rempx(3);
+      margin-top: rempx(50);
+      background-color: #F57723;
+      cursor: pointer;
+    }
+    .ceeatWallet{
+     font-size: 0.8rem;
+     color: #848484;
+     text-align: center;
+     margin-top: rempx(17);
+   }
+  }
+ }
+ .right{
+   position: relative;
+   width: 54%;
+   height: 100%;
+   background: url("../../assets/img/loginBg.png") no-repeat center;
+   background-size: cover;
+   .qrcode{
+     position: absolute;
+     left: 50%;
+     transform: translateX(-50%);
+     width: 8rem;
+     height: 8rem;
+     background: url("../../assets/img/qrcode.png") center no-repeat;
+     background-size: cover;
+   }
+ }
+}
