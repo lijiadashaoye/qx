@@ -66,7 +66,7 @@
           ><div class="grid-content bg-purple">证书信息</div></el-col
         >
         <el-col :span="21" style="margin-bottom: 30px">
-          <el-button size="small" plain @click="upLine = true"
+          <el-button size="small" plain @click="selectFirm"
             >编辑上链信息</el-button
           >
         </el-col>
@@ -77,7 +77,7 @@
           title="选择上链信息名称"
           :visible.sync="upLine"
           :before-close="closeUpLine"
-          width="34rem"
+          width="36rem"
         >
           <p>
             已选择<span style="color: #f76a0d">{{
@@ -86,11 +86,36 @@
             >个
           </p>
           <ul class="hasSelect">
-            <li v-for="t in upLineData" :key="t.id">{{ t.name }}</li>
+            <li @click="removeSelect(t)" v-for="t in upLineData" :key="t.id">
+              {{ t.name }}
+            </li>
           </ul>
           <p>请选择：</p>
-          <div></div>
-          <div></div>
+          <div class="toCreate">
+            <el-input
+              v-model="toSearchFirm"
+              placeholder="请输入上链信息名称"
+            ></el-input>
+            <el-button size="small" type="primary" @click="toSearch"
+              >搜索</el-button
+            >
+            <span @click="toCreate(1)" v-if="!isToCreate">创建新名称</span>
+            <span @click="toCreate(2)" v-if="isToCreate">关闭创建新名称</span>
+          </div>
+
+          <div class="toCreate2" v-if="isToCreate">
+            <el-input placeholder="请输入创建名称" v-model="createNew">
+              <span class="createNewSpan" slot="suffix" @click="toCreateNew"
+                >保存</span
+              >
+            </el-input>
+          </div>
+
+          <ul class="toSelect">
+            <li @click="addSelect(t)" v-for="t in firmList" :key="t.id">
+              {{ t.name }}
+            </li>
+          </ul>
 
           <span slot="footer" class="dialog-footer">
             <el-button size="small" @click="closeUpLine">取 消</el-button>
@@ -104,12 +129,12 @@
       <el-row class="row isRow">
         <el-col :span="21" :offset="3">
           <el-row class="row isRow">
-            <el-col :span="2">上链信息名称</el-col>
-            <el-col :span="19"> dfasdfdsf</el-col>
+            <el-col :span="3">上链信息名称</el-col>
+            <el-col :span="18">上链信息名称 上链信息名称 上链信息名称</el-col>
           </el-row>
           <el-row class="row isRow">
-            <el-col :span="2">证书内容</el-col>
-            <el-col :span="19">
+            <el-col :span="3">证书内容</el-col>
+            <el-col :span="18">
               <div class="grid-content bg-purple-light fileBtn">
                 <el-upload
                   class="upload-demo"
@@ -136,7 +161,7 @@
             </el-col>
           </el-row>
           <el-row class="row isRow">
-            <el-col :span="19" :offset="2">
+            <el-col :span="19" :offset="3">
               <div class="tip">
                 请上传.zip类型的压缩文件，<span
                   class="tip2"
@@ -231,9 +256,23 @@
       </el-row> -->
 
       <el-row>
-        <button @click="makePostData">makePostData</button>
+        <button @click="tuYuLan">预览</button>
+        <button @click="toMakeZip">打包</button>
+        <div>
+          <label
+            >选择excel文件：
+            <input
+              type="file"
+              style="margin-bottom: 10px"
+              @change="readExcel"
+            />
+          </label>
+        </div>
+
         <!-- 预览显示 -->
-        <makeCanvas v-for="(t, ind) in forYuLan" :key="ind" :muban="t" />
+        <div id="inCanvas">
+          <img v-for="(t, ind) in yulanList" :src="t" :key="ind" />
+        </div>
       </el-row>
 
       <el-row class="row">
@@ -499,10 +538,11 @@ import signature from "../../mixins/signatureMixin.js";
 import XLSX from "xlsx";
 import { getJSON } from "../../api/getjson";
 import sha256 from "sha256";
-import makeCanvas from "./makeCanvas.vue";
 
 //  二维码插件  https://www.npmjs.com/package/qrcode
 import QRCode from "qrcode";
+// 压缩操作插件
+import JSZip from "jszip";
 
 export default {
   mixins: [signature],
@@ -513,19 +553,22 @@ export default {
     presetText,
     qrcode,
     VueDragResize,
-    makeCanvas,
   },
   data() {
     return {
-      yyyy: "",
-      forYuLan: [], // 用来预览
+      forYuLan: [], // 用来储存预览的元数据
+      yulanList: [], // 真正用来预览的数据
       upLine: false, // 编辑上链信息弹框
       upLineData: [
-        {
-          id: 4,
-          name: "asdfasdfasdf",
-        },
-      ], // 编辑上链信息的数据
+        // 已经选择的企业
+      ],
+      firmList: [
+        // 待选企业列表
+      ],
+      toSearchFirm: "", //搜索企业
+      createNew: "", // 创建新名称
+      isToCreate: false, // 创建新名称输入框的显示
+      fangdou: null, // 用来去抖动
       ///////////////////////////////////////////////////////////////////
       isOK: false,
       title: "上传文件",
@@ -607,7 +650,6 @@ export default {
         certName: "",
         id: "",
       },
-
       isEdit: false,
       input: "",
       active: "pageindex",
@@ -631,6 +673,7 @@ export default {
       cretListImg: [],
     };
   },
+
   created() {
     // certNum	int	已用证书数量
     // certLimit
@@ -683,7 +726,6 @@ export default {
           const reader = new FileReader();
           reader.readAsDataURL(tar);
           reader.onload = () => {
-            console.log(this.forYuLan);
             this.forYuLan.push({
               width: this.templateForm.width,
               height: this.templateForm.height,
@@ -702,7 +744,6 @@ export default {
             });
           };
         }
-
         // 预览
         if (/pdf/.test(tar.type)) {
           let pdfPath = URL.createObjectURL(tar);
@@ -740,32 +781,6 @@ export default {
                 });
               });
             });
-
-            // 转换pdf每一
-            // let pageNume = pdfDocument.numPages, // 读取pdf一共有几页
-            //   promiseArr = []; // 记录pdf一共有几页
-            // for (let i = 0; i < pageNume; i++) {
-            //   let pro = pdfDocument.getPage(i + 1);
-            //   promiseArr.push(pro);
-            // }
-            // Promise.all(promiseArr).then((cavs) => {
-            //   cavs.forEach((pdfPage,ind) => {
-            //     // getViewport第一个参数scale，第二个是rotate
-            //     var viewport = pdfPage.getViewport(1, 360);
-            //     var canvas = document.createElement("canvas");
-            //     canvas.width = pdfPage.view[2];
-            //     canvas.height = pdfPage.view[3];
-            //     var ctx = canvas.getContext("2d");
-            //     var renderContext = {
-            //       canvasContext: ctx,
-            //       viewport: viewport,
-            //     };
-            //     pdfPage.render(renderContext).then(() => {
-            //       let kk = canvas.toDataURL("image/png", 1);
-            //       console.log(kk); // 获取到的每一张pdf的base64码
-            //     });
-            //   });
-            // });
           });
         }
       });
@@ -811,26 +826,260 @@ export default {
     },
   },
   methods: {
-    // 编辑上链信息
+    // 编辑上链企业
+    selectFirm() {
+      // 创造企业名称假数据
+      let arr = [];
+      for (let i = 0; i < 50; i++) {
+        arr.push({
+          id: i + 1,
+          name: `企业名称最多有十个字`,
+        });
+      }
+      // 根据id做个排序
+      this.firmList = arr.sort((a, b) => a.id - b.id);
+      this.upLine = true;
+    },
+    // 编辑上链信息确认按钮
     makeInfo() {
       console.log(this.upLineData);
+      //  this.upLine = false;
     },
     // 编辑上链信息弹框的关闭
     closeUpLine() {
       this.upLine = false;
-      this.makeInfo = [];
+      this.firmList = [];
+      this.upLineData = [];
+      this.createNew = "";
+      this.isToCreate = false;
     },
-    // 生成最后要传到服务器的数据
-    async makePostData() {
-      this.$set(this.muban.data, "data", [this.tempSelect]);
+    // 选择企业
+    addSelect(target) {
+      this.firmList = this.firmList.filter((t) => t.id != target.id);
+      this.upLineData.push(target);
+    },
+    // 删除已选择的企业
+    removeSelect(target) {
+      this.upLineData = this.upLineData.filter((t) => t.id != target.id);
+      let kk = this.firmList.concat([target]);
+      this.firmList = kk.sort((a, b) => a.id - b.id);
+    },
+    // 搜索企业
+    toSearch() {
+      console.log(this.toSearchFirm);
+    },
+    // 保存创建新名称
+    toCreateNew() {
+      // 上链信息名称不超过10个字
+      if (this.createNew.length < 10) {
+        console.log(this.createNew);
+        this.isToCreate = false;
+        this.createNew = "";
+      } else {
+        this.$message({
+          message: "上链信息名称不超过10个字！",
+          type: "error",
+        });
+      }
+    },
+    // 新建企业
+    toCreate(num) {
+      if (num == 1) {
+        this.isToCreate = true;
+      } else {
+        this.isToCreate = false;
+        this.createNew = "";
+      }
+    },
+    // 生成预览数据
+    tuYuLan() {
+      this.yulanList = [];
+      this.forYuLan.forEach(async (t, ind) => {
+        let kk = await this.makeCanvas(t);
+        setTimeout(() => {
+          this.yulanList.push(kk.toDataURL("image/png", 1));
+          console.log(this.yulanList);
+        });
+      });
+    },
+    // 生成zip文件
+    async toMakeZip() {
+      let data = this.$store.state.dragLesize.muban,
+        postData = [];
+      data.data.data.forEach(async (tar) => {
+        if (/image/.test(tar.type)) {
+          const reader = new FileReader();
+          reader.readAsDataURL(tar);
+          reader.onload = async (t) => {
+            let obj = {
+              width: this.templateForm.width,
+              height: this.templateForm.height,
+              backgroundImage: t.target.result, // 图片的base64码
+              children: [
+                {
+                  tagName: "qrcode", // 记录实际有内容的元素
+                  left: this.templateForm.width - 81, // 坐标x，需要距边界10px
+                  top: this.templateForm.height - 81, // 坐标y
+                  width: 71,
+                  height: 71,
+                  content: "占位示例二维码", // 二维码数据，到时候换成实际的二维码数据
+                },
+              ],
+            };
+            let kk = await this.makeCanvas(obj);
+            postData.push(kk);
+          };
+        }
+        if (/pdf/.test(tar.type)) {
+          // 转换pdf每一页
+          let pdfPath = URL.createObjectURL(tar);
+          let pdfjsLib = require("../../../static/js/pdf/pdf");
+          pdfjsLib.PDFJS.workerSrc = "../../../static/js/pdf/pdf.worker.js";
+          await pdfjsLib
+            .getDocument(pdfPath)
+            .promise.then(async (pdfDocument) => {
+              let pageNume = pdfDocument.numPages; // 读取pdf一共有几页
+              for (let i = 0; i < pageNume; i++) {
+                await pdfDocument.getPage(i + 1).then(async (pdfPage) => {
+                  // getViewport 第一个参数scale，第二个是rotate
+                  var viewport = pdfPage.getViewport(1, 360);
+                  var canvas = document.createElement("canvas");
+                  canvas.width = pdfPage.view[2]; // 获取pdf页面的宽
+                  canvas.height = pdfPage.view[3]; // 获取pdf页面的高
+                  var ctx = canvas.getContext("2d");
+                  var renderContext = {
+                    canvasContext: ctx,
+                    viewport: viewport,
+                  };
+                  await pdfPage.render(renderContext).then(async () => {
+                    // 获取到的每一张pdf的base64码
+                    let base64 = await canvas.toDataURL("image/png", 1);
+                    let obj = {
+                      width: pdfPage.view[2],
+                      height: pdfPage.view[3],
+                      backgroundImage: base64, // 图片的base64码
+                      children: [
+                        {
+                          tagName: "qrcode", // 记录实际有内容的元素
+                          left: pdfPage.view[2] - 81, // 坐标x，需要距边界10px
+                          top: pdfPage.view[3] - 81, // 坐标y
+                          width: 71,
+                          height: 71,
+                          content: "占位示例二维码", // 二维码数据，到时候换成实际的二维码数据
+                        },
+                      ],
+                    };
+                    let kk = await this.makeCanvas(obj);
+                    postData.push(kk);
+                  });
+                });
+              }
+            });
+        }
+      });
 
-      let qrcodeData = this.muban.children.filter(
-        (t) => t.tagName === "qrcode"
-      );
-      let end = await this.$refs.can.returnData("99999999999999999999");
-      // end 为最后的base64码
-      console.log(end);
+      setTimeout(() => {
+        var zip1 = new JSZip();
+        let kk = postData.map((t, ind) => {
+          return new Promise((res) => {
+            t.toBlob(async (blobObj) => {
+              await zip1.file(`${ind}-ffffffffff.png`, blobObj);
+              res();
+            });
+          });
+        });
+
+        Promise.all(kk).then(() => {
+          // 执行压缩
+          zip1.generateAsync({ type: "blob" }).then((zipFile) => {
+            // zipFile 为最终传给服务器的压缩包数据
+
+            // // 验证用，到时候删了
+            var save_link = document.createElement("a");
+            save_link.href = URL.createObjectURL(zipFile);
+            save_link.download = "name.zip";
+            save_link.click();
+          });
+        });
+      }, 1000);
     },
+    // 读取excel并放入数据
+    readExcel(e) {
+      let file = e.target.files[0],
+        workbook = null,
+        worksheet = null;
+      console.log(file);
+
+      const reader = new FileReader();
+      reader.readAsArrayBuffer(file);
+      reader.onload = (e) => {
+        workbook = XLSX.read(e.target.result, {
+          type: "buffer",
+        });
+        // 这里我们只读取第一张工作表sheet1
+        worksheet = workbook.Sheets[workbook.SheetNames[0]];
+        // console.log( this.worksheet)
+        // 读取的excel文件的标题
+        let title = Object.keys(worksheet).filter((str) => {
+            return str.slice(1, 2) === "1";
+          }),
+          // 读取的excel文件的数据
+          readExcelData = XLSX.utils.sheet_to_json(worksheet);
+
+        // 单元地址对象存储为{c:C, r:R}，c:col列,r:row行 可以定位到具体某一个单元格
+        // c表示横向x轴索引，从0开始，r表示纵向y轴索引，从0开始
+        // 例如，单元格地址B5表示{c:1, r:4}
+        // 单元格范围对象存储为范围{s:S, e:E}中S的第一个单元格和 E最后一个单元格。
+        // 例如，范围A3:B7由object表示{s:{c:0, r:2}, e:{c:1, r:6}}。
+        // 将单元格A3文字添加了 http://sheetjs.com 超链接链接
+        // ws['A3'].l = { Target:"http://sheetjs.com", Tooltip:"超链接链接提示文字" };
+
+        // 将新内容添加到excel表格
+        // 添加假数据
+        // let toAdd = [{ Aa: "新增的表格标题" }].concat(makeAddData());
+        let toAdd = makeAddData();
+        function makeAddData() {
+          let length = readExcelData.length,
+            backData = [];
+
+          for (let i = 0; i < length; i++) {
+            backData.push({
+              Aa: `新增的表格内容_${i + 1}`, // 新增的表格的标题
+            });
+          }
+          return backData;
+        }
+        // sheet_add_json 将JS对象数组添加到现有工作表中
+        XLSX.utils.sheet_add_json(
+          worksheet,
+          toAdd,
+          // origin 设置表格起始位置，header 设置 读取上边数据的key，只要一样就行，随便取名
+          {
+            origin: { r: 0, c: title.length },
+            header: ["新增的表格的标题"], // 新增的表格的标题
+          }
+        );
+        // 将更新的表格转换为json数据
+        let datas = XLSX.utils.sheet_to_json(worksheet);
+        // 下载文件
+        XLSX.writeFile(workbook, "修改过的的.xlsx");
+
+        // 生成excel文件，将这个 放到第 988 行处，形成代码逻辑为：
+        // let excel= await  XLSX.write(workbook, {
+        //   bookType: "xlsx",
+        //   bookSST: false,
+        //   type: "array", // 生成 ArrayBuffer
+        // })
+        // await zip1.file(`${ind}-ffffffffff.png`,excel);  // 压到zip里
+
+        XLSX.write(workbook, {
+          bookType: "xlsx",
+          bookSST: false,
+          type: "array", // 生成 ArrayBuffer
+        });
+      };
+    },
+
     // 为画图组件进行数据的整理
     makeMunban(data) {
       let muban = {
@@ -871,6 +1120,192 @@ export default {
         muban.children.push(obj);
       });
       this.forYuLan.push(muban);
+    },
+
+    // 生成二维码
+    makeEr(qrcodeData) {
+      // 要生成二维码的数据
+      let erWeiMa = qrcodeData.content;
+      var opts = {
+        errorCorrectionLevel: "Q",
+        quality: 1,
+        margin: 0.2,
+        maskPattern: 7, // 用于遮罩符号的遮罩图案  0--7
+        width: 72,
+        color: {
+          dark: "#000",
+          light: "#fff",
+        },
+      };
+      // 生成二维码，是一个base64 字符串
+      return QRCode.toDataURL(erWeiMa, opts).then(async (data) => {
+        // 生成的是一个base64 字符串
+        let img = new Image();
+        img.src = data;
+        await new Promise((res) => {
+          image.onload = () => {
+            res({
+              data: img,
+              width: opts.width,
+            });
+          };
+        });
+      });
+    },
+    // 制作canvas图片
+    async makeCanvas(forCanvas) {
+      // 构建canvas
+      let canvas = document.createElement("canvas"),
+        context = canvas.getContext("2d");
+
+      canvas.width = forCanvas.width;
+      canvas.height = forCanvas.height;
+      // 画背景颜色
+      if (forCanvas.backgroundColor) {
+        context.save();
+        context.fillStyle = forCanvas.backgroundColor;
+        context.fillRect(0, 0, forCanvas.width, forCanvas.height);
+        context.restore();
+      }
+      // 画背景图片
+      if (forCanvas.backgroundImage) {
+        context.save();
+        var image = new Image();
+        image.src = forCanvas.backgroundImage;
+        await new Promise((res) => {
+          image.onload = () => {
+            context.drawImage(image, 0, 0, forCanvas.width, forCanvas.height);
+            res();
+          };
+        });
+        context.restore();
+      }
+
+      // 画各个内容
+      forCanvas.children.forEach(async (t) => {
+        switch (t.tagName) {
+          case "presetImg":
+            context.save();
+            await new Promise((res) => {
+              let image = new Image();
+              image.src = t.content;
+              image.onload = (e) => {
+                context.drawImage(e.path[0], t.left, t.top, t.width, t.height);
+                res();
+              };
+            });
+            context.restore();
+            break;
+          case "presetText":
+            let spans = document.getElementById("chicun"),
+              textArr = t.content.text.split("");
+            if (!spans) {
+              spans = document.createElement("span");
+              spans.id = "chicun";
+              spans.style = "position: fixed; opacity: 0";
+              document.body.appendChild(spans);
+            }
+            context.save();
+            context.fillStyle = t.content.css.fillStyle; // 文字颜色
+            context.font = t.content.css.font; // 文字样式
+            context.textBaseline = "top"; // 文字起笔点
+            // 还原字体的分行显示
+            let arr = [], // 保存最后拆行的文字
+              num = 0, // 记录字符宽度累计
+              lastType = "", // 记录上一个文字的类型
+              str = ""; // 记录目前累计的文字
+            // 将文字拆成数组，逐个查看宽度
+            textArr.forEach((d, ind) => {
+              let tk = d.charCodeAt(),
+                nowType = "";
+              // 判断文字类型，方便后边的对比
+              if (tk >= 48 && tk <= 57) {
+                //"数字";
+                nowType = 1;
+              } else if (tk >= 65 && tk <= 90) {
+                // "大写";
+                nowType = 2;
+              } else if (tk >= 97 && tk <= 122) {
+                // "小写";
+                nowType = 3;
+              } else if (tk > 122) {
+                // "中文";
+                nowType = 4;
+              } else {
+                //  "标点";
+                nowType = 5;
+              }
+              let w = spans.offsetWidth; // 获取当前span的宽度
+              // 如果文字类型发生变动，需要重新获取span宽度
+              if (lastType !== nowType) {
+                lastType = nowType;
+                spans.innerHTML = d;
+                w = spans.offsetWidth;
+                setArr();
+              } else {
+                setArr();
+              }
+              // 设置分组函数
+              function setArr() {
+                if (num + w > t.width) {
+                  arr.push(str);
+                  str = d;
+                  num = w;
+                } else {
+                  str += d;
+                  num += w;
+                }
+              }
+              // 收尾
+              if (ind === textArr.length - 1) {
+                arr.push(str);
+              }
+            });
+            //   绘制字体
+            arr.forEach((str, index) => {
+              let top = index === 0 ? t.top + 4 : t.top;
+              context.fillText(str, t.left, top + index * spans.offsetHeight);
+            });
+            context.restore();
+            break;
+          default:
+            // 画二维码
+            context.save();
+            // 要生成二维码的数据
+            var opts = {
+              errorCorrectionLevel: "Q",
+              quality: 1,
+              margin: 0.1,
+              maskPattern: 7, // 用于遮罩符号的遮罩图案  0--7
+              width: 72,
+              color: {
+                dark: "#000",
+                light: "#fff",
+              },
+            };
+            // 生成二维码，是一个base64 字符串
+            let ma = await QRCode.toDataURL(t.content, opts);
+            await new Promise((res) => {
+              // 生成的是一个base64 字符串
+              let image = new Image();
+              image.src = ma;
+              image.onload = (e) => {
+                let erWeiMaX = forCanvas.width - opts.width - 10;
+                let erWeiMaY = forCanvas.height - opts.width - 10;
+                context.drawImage(
+                  e.path[0],
+                  erWeiMaX,
+                  erWeiMaY,
+                  opts.width,
+                  opts.width
+                );
+                context.restore();
+                res();
+              };
+            });
+        }
+      });
+      return canvas;
     },
 
     //////////////////////////////////////////////////////////////

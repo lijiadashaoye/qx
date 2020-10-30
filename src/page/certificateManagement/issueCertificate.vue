@@ -18,8 +18,63 @@
             maxlength="30"
           ></el-input>
         </el-form-item>
-        <el-form-item label="证书信息">
-          <el-button plain @click="makeInfo">编辑上链信息</el-button>
+        <el-form-item label="证书信息" class="selectDialog">
+          <el-button size="small" plain @click="selectFirm"
+            >编辑上链信息</el-button
+          >
+          <!-- 编辑上链信息弹框 -->
+          <el-dialog
+            :close-on-click-modal="false"
+            title="选择上链信息名称"
+            :visible.sync="upLine"
+            :before-close="closeUpLine"
+            width="36rem"
+          >
+            <p style="margin: 0">
+              已选择<span style="color: #f76a0d">{{
+                ` ${upLineData.length} `
+              }}</span
+              >个
+            </p>
+            <ul class="hasSelect">
+              <li @click="removeSelect(t)" v-for="t in upLineData" :key="t.id">
+                {{ t.name }}
+              </li>
+            </ul>
+            <p style="margin: 0">请选择：</p>
+            <div class="toCreate">
+              <el-input
+                v-model="toSearchFirm"
+                placeholder="请输入上链信息名称"
+              ></el-input>
+              <el-button size="small" type="primary" @click="toSearch"
+                >搜索</el-button
+              >
+              <span @click="toCreate(1)" v-if="!isToCreate">创建新名称</span>
+              <span @click="toCreate(2)" v-if="isToCreate">关闭创建新名称</span>
+            </div>
+
+            <div class="toCreate2" v-if="isToCreate">
+              <el-input placeholder="请输入创建名称" v-model="createNew">
+                <span class="createNewSpan" slot="suffix" @click="toCreateNew"
+                  >保存</span
+                >
+              </el-input>
+            </div>
+
+            <ul class="toSelect">
+              <li @click="addSelect(t)" v-for="t in firmList" :key="t.id">
+                {{ t.name }}
+              </li>
+            </ul>
+
+            <span slot="footer" class="dialog-footer">
+              <el-button size="small" @click="closeUpLine">取 消</el-button>
+              <el-button size="small" type="primary" @click="makeInfo"
+                >确 定</el-button
+              >
+            </span>
+          </el-dialog>
         </el-form-item>
 
         <el-form-item :label="'设置授权'">
@@ -52,7 +107,30 @@
 
     <button @click="makePostData">makePostData</button>
     <!-- 预览显示 -->
-    <makeCanvas :muban="muban" ref="can" />
+    <el-row>
+      <el-col :offset="2" :span="15">
+        <el-row class="showRow">
+          <el-col :span="2"> 姓名： </el-col>
+          <el-col :span="22">
+            <el-input v-model="name"></el-input>
+          </el-col>
+        </el-row>
+      </el-col>
+      <el-col :offset="2" :span="15">
+        <el-row class="showRow">
+          <el-col :span="2"> 企业名称： </el-col>
+          <el-col :span="22">
+            <el-input v-model="firmName"></el-input>
+          </el-col>
+        </el-row>
+      </el-col>
+
+      <el-col :offset="2" :span="16">
+        <div id="inCanvas">
+          <img :src="imageData.yulan" v-if="imageData.yulan" />
+        </div>
+      </el-col>
+    </el-row>
 
     <!-- <div class="templatebox">
       <div
@@ -135,7 +213,7 @@
       style="
         margin-top: 30px;
         text-align: center;
-        width: 100%;
+        width: 80%;
         margin-bottom: 30px;
       "
     >
@@ -256,7 +334,11 @@ import temText from "./components/temText";
 import presetText from "./components/presetText";
 import presetImg from "./components/presetImg";
 import signature from "../../mixins/signatureMixin.js";
-import makeCanvas from "./makeCanvas.vue";
+
+//  二维码插件  https://www.npmjs.com/package/qrcode
+import QRCode from "qrcode";
+// 压缩操作插件
+import JSZip from "jszip";
 
 export default {
   mixins: [signature],
@@ -267,12 +349,29 @@ export default {
     presetText,
     qrcode,
     VueDragResize,
-    makeCanvas,
   },
   data() {
     return {
-      yyyy: "",
       muban: {}, // 用来显示canvas
+      upLine: false, // 编辑上链信息弹框
+      upLineData: [
+        // 已经选择的企业
+      ],
+      firmList: [
+        // 待选企业列表
+      ],
+      toSearchFirm: "", //搜索企业
+      createNew: "", // 创建新名称
+      isToCreate: false, // 创建新名称输入框的显示
+
+      name: "", // 姓名
+      firmName: "", // 企业名称
+      fangdou: null, // 用来去抖动
+      imageData: {
+        yulan: "", // 用来预览
+        postData: "", // 保存最后要上传的图片数据
+      }, // 存储用来预览的图片数据
+      ////////////////////////////////////////////////////////////////
       qrcodeSign: "",
       preCert: {},
       showPreCert: false,
@@ -417,7 +516,6 @@ export default {
           };
         };
       }
-
       // 预览
       if (/pdf/.test(data.data[0].type)) {
         let pdfPath = URL.createObjectURL(data.data[0]);
@@ -455,37 +553,33 @@ export default {
               };
             });
           });
-
-          // 转换pdf每一
-          // let pageNume = pdfDocument.numPages, // 读取pdf一共有几页
-          //   promiseArr = []; // 记录pdf一共有几页
-          // for (let i = 0; i < pageNume; i++) {
-          //   let pro = pdfDocument.getPage(i + 1);
-          //   promiseArr.push(pro);
-          // }
-          // Promise.all(promiseArr).then((cavs) => {
-          //   cavs.forEach((pdfPage,ind) => {
-          //     // getViewport第一个参数scale，第二个是rotate
-          //     var viewport = pdfPage.getViewport(1, 360);
-          //     var canvas = document.createElement("canvas");
-          //     canvas.width = pdfPage.view[2];
-          //     canvas.height = pdfPage.view[3];
-          //     var ctx = canvas.getContext("2d");
-          //     var renderContext = {
-          //       canvasContext: ctx,
-          //       viewport: viewport,
-          //     };
-          //     pdfPage.render(renderContext).then(() => {
-          //       let kk = canvas.toDataURL("image/png", 1);
-          //       console.log(kk); // 获取到的每一张pdf的base64码
-          //     });
-          //   });
-          // });
         });
       }
     }
   },
-
+  watch: {
+    muban: {
+      handler: function (t) {
+        if (!this.fangdou) {
+          // 防抖
+          this.fangdou = setTimeout(async () => {
+            if (!this.imageData.yulan) {
+              let kk = await this.makeCanvas(t);
+              document.getElementById("inCanvas").appendChild(kk);
+              setTimeout(() => {
+                let zz = canvas.toDataURL("image/png", 1);
+                console.log(zz)
+              });
+            }
+          }, 200);
+        } else {
+          clearTimeout(this.fangdou);
+          this.fangdou = null;
+        }
+      },
+      deep: true,
+    },
+  },
   computed: {
     companyAuthList() {
       let depart = this.companyAuthIds.map((item) => {
@@ -516,18 +610,127 @@ export default {
     // document.getElementsByClassName("templatebox")[0].offsetWidth - 550;
   },
   methods: {
-    // 编辑上链信息
-    makeInfo() {},
+    // 编辑上链企业
+    selectFirm() {
+      let arr = [];
+      for (let i = 0; i < 50; i++) {
+        arr.push({
+          id: i + 1,
+          name: `企业名称最多有十个字`,
+        });
+      }
+
+      this.firmList = arr.sort((a, b) => a.id - b.id);
+      this.upLine = true;
+    },
+
+    // 编辑上链信息确认按钮
+    makeInfo() {
+      console.log(this.upLineData);
+      this.upLine = false;
+    },
+    // 编辑上链信息弹框的关闭
+    closeUpLine() {
+      this.upLine = false;
+      this.firmList = [];
+      this.upLineData = [];
+      this.createNew = "";
+    },
+    // 选择企业
+    addSelect(target) {
+      this.firmList = this.firmList.filter((t) => t.id != target.id);
+      this.upLineData.push(target);
+    },
+    // 删除已选择的企业
+    removeSelect(target) {
+      this.upLineData = this.upLineData.filter((t) => t.id != target.id);
+      let kk = this.firmList.concat([target]);
+      this.firmList = kk.sort((a, b) => a.id - b.id);
+    },
+    // 搜索企业
+    toSearch() {
+      console.log(this.toSearchFirm);
+    },
+    // 保存创建新名称
+    toCreateNew() {
+      // 上链信息名称不超过10个字
+      if (this.createNew.length < 10) {
+        console.log(this.createNew);
+        this.isToCreate = false;
+        this.createNew = "";
+      } else {
+        this.$message({
+          message: "上链信息名称不超过10个字！",
+          type: "error",
+        });
+      }
+    },
+    // 新建企业
+    toCreate(num) {
+      if (num == 1) {
+        this.isToCreate = true;
+      } else {
+        this.isToCreate = false;
+        this.createNew = "";
+      }
+    },
     // 生成最后要传到服务器的数据
     async makePostData() {
-      this.$set(this.muban.data, "data", [this.tempSelect]);
+      // 数据验证
+      // if (this.name && this.firmName) {
+      //   console.log(this.dynamicValidateForm);
+      //   console.log(this.name);
+      //   console.log(this.firmName);
+      //   console.log(this.upLineData);
+      // } else {
+      //   this.$message({
+      //     message: "请输入完整的姓名和企业名称！",
+      //     type: "error",
+      //   });
+      // }
 
       let qrcodeData = this.muban.children.filter(
         (t) => t.tagName === "qrcode"
-      );
-      let end = await this.$refs.can.returnData("99999999999999999999");
-      // end 为最后的base64码
-      console.log(end);
+      )[0];
+
+      // 二维码数据，到时候换成实际的二维码数据
+      qrcodeData.content = "888888888888888888888888888";
+
+      let kk = await this.makeCanvas(this.muban);
+
+      let canvas = document.createElement("canvas"),
+        context = canvas.getContext("2d");
+      canvas.width = this.muban.width;
+      canvas.height = this.muban.height;
+      context.drawImage(kk, canvas.width, canvas.height);
+
+      setTimeout(() => {
+        canvas.toBlob((blobObj) => {
+          //
+          this.imageData.postData = blobObj;
+          var zip1 = new JSZip();
+          zip1.file("ffffffffff.png", this.imageData.postData);
+          // 如果压入多个文件，就链式操作，如：
+          // zip1
+          //   .file("1111111.png", this.imageData.postData)
+          //   .file("2222222.png", this.imageData.postData)
+          //   .file("3333333.png", this.imageData.postData);
+          // 执行压缩
+          zip1.generateAsync({ type: "blob" }).then((t) => {
+            // t为最终传给服务器的压缩包数据
+            console.log(t);
+
+            // // 验证用，到时候删了
+            // var save_link = document.createElement("a");
+            // save_link.href = URL.createObjectURL(t);
+            // save_link.download = "name.zip";
+            // save_link.click();
+          });
+        });
+      });
+
+      // // end 为最后的base64码
+      // console.log(end);
     },
     // 为画图组件进行数据的整理
     makeMunban(data) {
@@ -568,6 +771,191 @@ export default {
         }
         this.muban.children.push(obj);
       });
+    },
+    // 生成二维码
+    makeEr(qrcodeData) {
+      // 要生成二维码的数据
+      let erWeiMa = qrcodeData.content;
+      var opts = {
+        errorCorrectionLevel: "Q",
+        quality: 1,
+        margin: 0.2,
+        maskPattern: 7, // 用于遮罩符号的遮罩图案  0--7
+        width: 72,
+        color: {
+          dark: "#000",
+          light: "#fff",
+        },
+      };
+      // 生成二维码，是一个base64 字符串
+      return QRCode.toDataURL(erWeiMa, opts).then(async (data) => {
+        // 生成的是一个base64 字符串
+        let img = new Image();
+        img.src = data;
+        await new Promise((res) => {
+          image.onload = () => {
+            res({
+              data: img,
+              width: opts.width,
+            });
+          };
+        });
+      });
+    },
+    // 制作canvas图片
+    async makeCanvas(forCanvas) {
+      // 构建canvas
+      let canvas = document.createElement("canvas"),
+        context = canvas.getContext("2d");
+
+      canvas.width = forCanvas.width;
+      canvas.height = forCanvas.height;
+      // 画背景颜色
+      if (forCanvas.backgroundColor) {
+        context.save();
+        context.fillStyle = forCanvas.backgroundColor;
+        context.fillRect(0, 0, forCanvas.width, forCanvas.height);
+        context.restore();
+      }
+      // 画背景图片
+      if (forCanvas.backgroundImage) {
+        context.save();
+        var image = new Image();
+        image.src = forCanvas.backgroundImage;
+        await new Promise((res) => {
+          image.onload = () => {
+            context.drawImage(image, 0, 0, forCanvas.width, forCanvas.height);
+            res();
+          };
+        });
+        context.restore();
+      }
+
+      // 画各个内容
+      forCanvas.children.forEach(async (t) => {
+        switch (t.tagName) {
+          case "presetImg":
+            context.save();
+            await new Promise((res) => {
+              let image = new Image();
+              image.src = t.content;
+              image.onload = (e) => {
+                context.drawImage(e.path[0], t.left, t.top, t.width, t.height);
+                res();
+              };
+            });
+            context.restore();
+            break;
+          case "presetText":
+            let spans = document.getElementById("chicun"),
+              textArr = t.content.text.split("");
+            if (!spans) {
+              spans = document.createElement("span");
+              spans.id = "chicun";
+              spans.style = "position: fixed; opacity: 0";
+              document.body.appendChild(spans);
+            }
+            context.save();
+            context.fillStyle = t.content.css.fillStyle; // 文字颜色
+            context.font = t.content.css.font; // 文字样式
+            context.textBaseline = "top"; // 文字起笔点
+            // 还原字体的分行显示
+            let arr = [], // 保存最后拆行的文字
+              num = 0, // 记录字符宽度累计
+              lastType = "", // 记录上一个文字的类型
+              str = ""; // 记录目前累计的文字
+            // 将文字拆成数组，逐个查看宽度
+            textArr.forEach((d, ind) => {
+              let tk = d.charCodeAt(),
+                nowType = "";
+              // 判断文字类型，方便后边的对比
+              if (tk >= 48 && tk <= 57) {
+                //"数字";
+                nowType = 1;
+              } else if (tk >= 65 && tk <= 90) {
+                // "大写";
+                nowType = 2;
+              } else if (tk >= 97 && tk <= 122) {
+                // "小写";
+                nowType = 3;
+              } else if (tk > 122) {
+                // "中文";
+                nowType = 4;
+              } else {
+                //  "标点";
+                nowType = 5;
+              }
+              let w = spans.offsetWidth; // 获取当前span的宽度
+              // 如果文字类型发生变动，需要重新获取span宽度
+              if (lastType !== nowType) {
+                lastType = nowType;
+                spans.innerHTML = d;
+                w = spans.offsetWidth;
+                setArr();
+              } else {
+                setArr();
+              }
+              // 设置分组函数
+              function setArr() {
+                if (num + w > t.width) {
+                  arr.push(str);
+                  str = d;
+                  num = w;
+                } else {
+                  str += d;
+                  num += w;
+                }
+              }
+              // 收尾
+              if (ind === textArr.length - 1) {
+                arr.push(str);
+              }
+            });
+            //   绘制字体
+            arr.forEach((str, index) => {
+              let top = index === 0 ? t.top + 4 : t.top;
+              context.fillText(str, t.left, top + index * spans.offsetHeight);
+            });
+            context.restore();
+            break;
+          default:
+            // 画二维码
+            context.save();
+            // 要生成二维码的数据
+            var opts = {
+              errorCorrectionLevel: "Q",
+              quality: 1,
+              margin: 0.1,
+              maskPattern: 7, // 用于遮罩符号的遮罩图案  0--7
+              width: 72,
+              color: {
+                dark: "#000",
+                light: "#fff",
+              },
+            };
+            // 生成二维码，是一个base64 字符串
+            let ma = await QRCode.toDataURL(t.content, opts);
+            await new Promise((res) => {
+              // 生成的是一个base64 字符串
+              let image = new Image();
+              image.src = ma;
+              image.onload = (e) => {
+                let erWeiMaX = forCanvas.width - opts.width - 10;
+                let erWeiMaY = forCanvas.height - opts.width - 10;
+                context.drawImage(
+                  e.path[0],
+                  erWeiMaX,
+                  erWeiMaY,
+                  opts.width,
+                  opts.width
+                );
+                context.restore();
+                res();
+              };
+            });
+        }
+      });
+      return canvas;
     },
 
     //////////////////////////////////////////////////////////////
@@ -1457,5 +1845,168 @@ export default {
   height: 2rem;
   width: 1.95rem;
   background-size: 100%;
+}
+</style>
+
+
+
+<style lang="scss" scoped>
+#inCanvas {
+  display: flex;
+  justify-content: center;
+}
+.selectDialog {
+  .hasSelect {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    max-height: 12rem;
+    overflow-y: scroll;
+
+    li:nth-of-type(3n-1) {
+      margin: 0.4rem 1rem;
+    }
+
+    li {
+      font-size: 12px;
+      color: #ff6600;
+      padding: 0 0.3rem;
+      margin: 0;
+      width: 30%;
+      box-sizing: border-box;
+      display: inline-block;
+      border: 1px solid #ff6600;
+      border-radius: 5px;
+      background: url("../../assets/img/duigou.png") no-repeat;
+      background-position: right bottom;
+      background-size: 1.2rem 1.2rem;
+      position: relative;
+      text-align: center;
+      height: 34px;
+      line-height: 30px;
+    }
+
+    li:hover::after {
+      position: absolute;
+      left: 0;
+      top: 0;
+      text-align: center;
+      line-height: 32px;
+      content: "删 除";
+      cursor: pointer;
+      background-color: rgba(255, 102, 0, 0.8);
+      border-radius: 3px;
+      color: #fff;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .toSelect {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 0;
+    margin-top: 20px;
+    max-height: 20rem;
+    overflow-y: scroll;
+
+    li {
+      font-size: 12px;
+      color: #333333;
+      padding: 0 0.3rem;
+      margin: 0;
+      width: 30%;
+      display: inline-block;
+      border: 1px solid #dddddd;
+      border-radius: 5px;
+      position: relative;
+      width: 30%;
+      text-align: center;
+      box-sizing: border-box;
+      height: 34px;
+      line-height: 30px;
+    }
+
+    li:nth-of-type(3n-1) {
+      margin: 0.4rem 1rem;
+    }
+
+    li:hover::after {
+      position: absolute;
+      left: 0;
+      top: 0;
+      text-align: center;
+      content: "添 加";
+      cursor: pointer;
+      background-color: rgba(255, 102, 0, 0.8);
+      border-radius: 5px;
+      color: #fff;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      line-height: 32px;
+    }
+  }
+  .toCreate {
+    display: flex;
+    align-items: center;
+
+    span {
+      display: block;
+      width: 28%;
+      flex-shrink: 0;
+      text-indent: 0.5rem;
+      cursor: pointer;
+      color: #ff6600;
+    }
+
+    button {
+      width: 70px;
+      flex-shrink: 0;
+      margin-left: 10px;
+    }
+  }
+  /*修改滚动条样式*/
+  ul::-webkit-scrollbar {
+    width: 8px;
+    height: 5px;
+  }
+  ul::-webkit-scrollbar-track {
+    background: rgb(239, 239, 239);
+    border-radius: 2px;
+  }
+  ul::-webkit-scrollbar-thumb {
+    background: #bfbfbf;
+    border-radius: 10px;
+  }
+  ul::-webkit-scrollbar-thumb:hover {
+    background: #333;
+  }
+  ul::-webkit-scrollbar-corner {
+    background: #179a16;
+  }
+  .toCreate2 {
+    margin: 0;
+    display: flex;
+    padding-right: 45%;
+  }
+  .createNewSpan {
+    color: #333333;
+    cursor: pointer;
+    display: inline-block;
+    padding-right: 5px;
+  }
+  .createNewSpan:hover {
+    color: #ff6600;
+  }
+}
+.showRow {
+  margin: 0.9rem 0;
 }
 </style>
